@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.3.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 361 64.4" style="enable-background:new 0 0 361 64.4;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:url(#SVGID_1_);}
+	.st1{fill:none;stroke:#000000;stroke-miterlimit:10;}
+	.st2{fill:#7E0023;}
+	.st3{fill:#009966;}
+	.st4{fill:#FFDE33;}
+	.st5{fill:#FF9933;}
+	.st6{fill:#CC0033;}
+	.st7{fill:#660099;}
+	.st8{font-family:'IBMPlexSans';}
+	.st9{font-size:10px;}
+	.st10{fill:#FFFFFF;}
+	.st11{font-family:'IBMPlexSans-Medium';}
+	.st12{font-size:8px;}
+</style>
+<g>
+	<rect x="300.5" y="0.5" class="st2" width="60" height="25"/>
+	<rect x="0.5" y="0.5" class="st3" width="14.4" height="25"/>
+	<rect x="14.9" y="0.5" class="st4" width="28.2" height="25"/>
+	<rect x="43.1" y="0.5" class="st5" width="24" height="25"/>
+	<rect x="67.1" y="0.5" class="st6" width="114" height="25"/>
+	<rect x="181.1" y="0.5" class="st7" width="120" height="25"/>
+	<rect x="0.5" y="0.5" class="st1" width="360" height="25"/>
+	<line class="st1" x1="0.5" y1="25.5" x2="0.5" y2="29.5"/>
+	<line class="st1" x1="14.9" y1="25.5" x2="14.9" y2="29.5"/>
+	<line class="st1" x1="43.1" y1="25.5" x2="43.1" y2="29.5"/>
+	<line class="st1" x1="67.1" y1="25.5" x2="67.1" y2="29.5"/>
+	<line class="st1" x1="181.1" y1="25.5" x2="181.1" y2="29.5"/>
+	<line class="st1" x1="301.1" y1="25.5" x2="301.1" y2="29.5"/>
+	<line class="st1" x1="360.5" y1="25.5" x2="360.5" y2="29.5"/>
+	<text transform="matrix(1 0 0 1 1.5 34.0474)" class="st8 st9">0</text>
+	<text transform="matrix(1 0 0 1 15.9 34.0473)" class="st8 st9">12</text>
+	<text transform="matrix(1 0 0 1 44.1001 34.0474)" class="st8 st9">35.5</text>
+	<text transform="matrix(1 0 0 1 68.1002 34.0474)" class="st8 st9">55.5</text>
+	<text transform="matrix(1 0 0 1 182.1004 34.0474)" class="st8 st9">150.5</text>
+	<text transform="matrix(1 0 0 1 302.1002 34.0474)" class="st8 st9">250.5</text>
+	<text transform="matrix(1 0 0 1 341.5008 34.0474)" class="st8 st9">300</text>
+	<rect x="0.5" y="39.4" class="st3" width="60" height="25"/>
+	<rect x="60.5" y="39.4" class="st4" width="60" height="25"/>
+	<rect x="120.5" y="39.4" class="st5" width="60" height="25"/>
+	<rect x="180.5" y="39.4" class="st6" width="60" height="25"/>
+	<rect x="240.5" y="39.4" class="st7" width="60" height="25"/>
+	<rect x="300.5" y="39.4" class="st2" width="60" height="25"/>
+	<text transform="matrix(1 0 0 1 20.8006 55.9004)" class="st10 st11 st12">Good</text>
+	<text transform="matrix(1 0 0 1 72.9842 55.9004)" class="st11 st12">Moderate</text>
+	<text transform="matrix(1 0 0 1 191.7201 55.9004)" class="st10 st11 st12">Unhealthy</text>
+	<text transform="matrix(1 0 0 1 310.8521 55.9004)" class="st10 st11 st12">Hazardous</text>
+	<text transform="matrix(1 0 0 1 242.4525 55.9004)" class="st10 st11 st12">Very Unhealthy</text>
+	<text transform="matrix(1 0 0 1 125.6283 49.4193)"><tspan x="0" y="0" class="st11 st12">Unhealthy for</tspan><tspan x="-5" y="9.6" class="st11 st12">sensitive groups</tspan></text>
+</g>
+</svg>
