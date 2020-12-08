@@ -1,12 +1,17 @@
 import React from "react";
 import styled from "styled-components";
-import { HealthTag } from "./generic/HealthTag";
-import { getHealthStatus } from "./utils/getHealthStatus";
-import Particles from "./Particles";
+import { HealthTag } from "../../generic/HealthTag";
+import { getHealthStatus } from "../../utils/getHealthStatus";
+import Particles from "../../generic/Particles";
+import { Link } from "react-router-dom";
+
 
 interface PassedProps {
   city: string;
   country: string;
+  cityID: string;
+  countryID: string;
+  regionID: string;
   value: number | null;
   index: number;
   ranking?: number;
@@ -48,7 +53,7 @@ const ParticlesEl = styled.div`
   margin-bottom: 10px;
 `;
 
-const LinkEl = styled.a`
+const LinkEl = styled.div`
   border: 0;
   padding: 0;
   color: var(--secondary-color);
@@ -57,69 +62,89 @@ const LinkEl = styled.a`
 `;
 
 export const CityCard = (props: PassedProps) => {
-  if (props.value)
+  const {
+    city,
+    country,
+    cityID,
+    countryID,
+    regionID,
+    value,
+    index,
+    ranking,
+  }  = props;
+  if (value)
     return (
       <CityEl>
         <CardTitle>
           <CityName>
-            {props.city}, {props.country}
+            {city}, {country}
           </CityName>
-          {props.ranking ? <Ranking># {props.ranking}</Ranking> : null}
+          {ranking ? <Ranking># {ranking}</Ranking> : null}
         </CardTitle>
         <TextEl>
-          PM 2.5 Conc.: <span className="bold">{props.value} μg/m3</span>
+          PM 2.5 Conc.: <span className="bold">{value} μg/m3</span>
         </TextEl>
         <TextEl>
           Health Status:
           <HealthTag
-            backgroundColor={getHealthStatus(props.value)?.backgroundColor}
-            color={getHealthStatus(props.value)?.color}
-            text={getHealthStatus(props.value)?.value}
+            backgroundColor={getHealthStatus(value)?.backgroundColor}
+            color={getHealthStatus(value)?.color}
+            text={getHealthStatus(value)?.value}
             truncate={
-              getHealthStatus(props.value)?.value ===
+              getHealthStatus(value)?.value ===
               "Unhealthy for sensitive groups"
                 ? true
                 : false
             }
           />
         </TextEl>
-        <TextEl>
-          Cigarette Eq.:{" "}
-          <span className="bold">
-            {(props.value / 22).toFixed(1)} cigarettes / day
-          </span>
-        </TextEl>
         <ParticlesEl>
           <Particles
             width={286 / 2}
             height={286}
-            id={`ParticleGood${props.index}`}
+            id={`ParticleGood${index}`}
             density={12}
             note={"Good Air Quality"}
           />
           <Particles
             width={286 / 2}
             height={286}
-            id={`Particle${props.index}`}
-            density={props.value}
-            note={`Air Quality in ${props.city}`}
+            id={`Particle${index}`}
+            density={value}
+            note={`Air Quality in ${city}`}
           />
         </ParticlesEl>
-        <LinkEl href="www.google.com">
-          Click here to see the historic data
-        </LinkEl>
+        <TextEl className="italics">
+          Breathing this air for 1 day is equivalent to smoking{" "}
+          <span className="bold">
+            {(value / 22).toFixed(1)} cigarettes
+          </span>
+          .{" "}
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://berkeleyearth.org/archive/air-pollution-and-cigarette-equivalence/"
+          >
+            Learn more
+          </a>
+        </TextEl>
+        <Link to={`/${countryID}/${regionID}/${cityID}`}>
+          <LinkEl>
+            Click here to see the historic data
+          </LinkEl>
+        </Link>
       </CityEl>
     );
   return (
     <CityEl>
       <CityName>
-        {props.city}, {props.country}
+        {city}, {country}
       </CityName>
       <TextEl>
         PM 2.5 Conc.:{" "}
         <span className="bold">Data not available for last hour</span>
       </TextEl>
-      <LinkEl href="www.google.com">Click here to see the historic data</LinkEl>
+      <LinkEl>Click here to see the historic data</LinkEl>
     </CityEl>
   );
 };

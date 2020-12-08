@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { MapView } from "./MapView";
-import { getRoundedValue } from "./utils/getRoundedValue";
-import { getHealthStatus } from "./utils/getHealthStatus";
-import { HealthTag } from "./generic/HealthTag";
-import { Sequential, Quantized } from "./Scales";
+import { getRoundedValue } from "../../utils/getRoundedValue";
+import { getHealthStatus } from "../../utils/getHealthStatus";
+import { HealthTag } from "../../generic/HealthTag";
+import { Sequential, Quantized } from "../../Scales";
 
 // tslint:disable-next-line: no-var-requires
-const data = require("./data/airQualityData.json");
+const data = require("../../data/airQualityData.json");
 
 interface MapMode {
   mode: string;
@@ -142,20 +142,11 @@ const MapComponent = () => {
             {dataValue ? (
               <>
                 <div>
-                  Smoking{" "}
+                  Breathing this air for 1 day is equivalent to smoking{" "}
                   <span className={"bold"}>
-                    {(dataValue.value / 22).toFixed(2)} cigarettes / day
+                    {(dataValue.value / 22).toFixed(2)} cigarettes
                   </span>
                 </div>
-                <SubNote>
-                  <a
-                    rel="noreferrer"
-                    href="http://berkeleyearth.org/archive/air-pollution-and-cigarette-equivalence/"
-                    target="_blank"
-                  >
-                    Learn more about this here
-                  </a>
-                </SubNote>
               </>
             ) : (
               <div>N/A</div>
@@ -168,7 +159,7 @@ const MapComponent = () => {
       <DateTime>{data.dateTime} UTC</DateTime>
       <ColorScale colorScale={colorScale}>
         <h4>
-          PM2.5 Concetration (μg / m<sup>3</sup>)
+          PM2.5 Concetration (μg/m<sup>3</sup>)
         </h4>
         {colorScale === "Sequential" ? <Sequential /> : <Quantized />}
       </ColorScale>
