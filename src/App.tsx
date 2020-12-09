@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Home from "./Home";
 import About from "./About";
 import CityPage from "./CityPage";
+import { FacebookIcon, TwitterIcon, FacebookShareButton, TwitterShareButton } from "react-share";
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -75,6 +76,15 @@ const GlobalStyle = createGlobalStyle`
     height: 500px;
     background: transparent !important;
   }
+
+  .tooltip {
+    position: absolute;
+    padding: 5px;
+    font-size: 12px;
+    font-family: IBM Plex Sans, sans-serif;
+    background: rgba(255,255,255,0.5);
+    pointer-events: none;
+  }
 `;
 
 const Header = styled.header`
@@ -82,10 +92,17 @@ const Header = styled.header`
   height: 50px;
   background-color: var(--white);
   display: flex;
-  padding: 20px 0 10px 0;;
+  padding: 20px 0 10px 0;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--gray);
+`;
+
+const Footer = styled.footer`
+  background-color: var(--black);
+  padding-top: 40px;
+  align-items: center;
+  color: var(--white);
 `;
 
 const Logo = styled.div`
@@ -114,12 +131,45 @@ const Navigation = styled.div`
 const NavEl = styled.div`
   margin: 0 20px;
 
-
   a {
     text-decoration: none;
     font-style: normal;
     color: var(--primary-color);
   }
+`;
+
+const Container = styled.div`
+  max-width: 1272px;
+  padding: 0 20px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+
+  a {
+    color: var(--white);
+    text-decoration: underline;
+  }
+`;
+
+const FooterContainer = styled.div`
+  width: 40%;
+  min-width: 320px;
+`;
+
+const FooterSubNote = styled.div`
+  margin-top: 40px;
+  background-color: rgba(255, 255, 255, 0.1);
+  text-align: center;
+  padding: 10px 0;
+`;
+
+const IconContainer = styled.div`
+  margin-top: 5px;
+  display: flex;
+`;
+
+const IconEl = styled.div`
+  margin-right: 10px;
 `;
 
 const App = () => {
@@ -139,22 +189,95 @@ const App = () => {
               <Link to="/">Map</Link>
             </NavEl>
             <NavEl>
-              <Link to="/about">About</Link>
+              <Link to="/more-info">More Info</Link>
             </NavEl>
           </Navigation>
         </Header>
         <Switch>
-          <Route path="/about">
+          <Route path="/more-info">
             <About />
           </Route>
-          <Route path="/:country/:region/:city" render={(props) => {
-                    return ( <CityPage {...props } /> )
-                }} />
+          <Route
+            path="/:country/:region/:city"
+            render={(props) => {
+              return <CityPage {...props} />;
+            }}
+          />
           <Route path="/">
             <Home />
           </Route>
-
         </Switch>
+        <Footer className="appFooter">
+          <Container>
+            <FooterContainer>
+              <h2>About the Project</h2>
+              <div>
+                The project tries to visualizes near real-time data and
+                historical data of concentration on particulate matter less than
+                2.5 microns (PM 2.5) in diameter in the air. The data used is
+                fetched from{" "}
+                <a
+                  target="_blank"
+                  rel="noreferrer"
+                  href="https://berkeleyearth.org/"
+                >
+                  Berkeley Earth
+                </a>
+                . <br />
+                <Link to="/more-info">Learn More</Link>
+              </div>
+            </FooterContainer>
+            <FooterContainer>
+              <h2>Share the Project</h2>
+              <div>
+                Share the{" "}
+                <span aria-label="love-emoji" role="img">
+                  💖
+                </span>
+              </div>
+              <IconContainer>
+                <IconEl>
+                  <FacebookShareButton
+                    url={"https://airq.mustafasaifee.com"}
+                    quote={
+                      "Dashboard visualizing real-time worldwide air quality levels. Learn from PM2.5 trends of most cities in the world"
+                    }
+                  >
+                    <FacebookIcon size={32} round={true} />
+                  </FacebookShareButton>
+                </IconEl>
+                <IconEl>
+                  <TwitterShareButton
+                    url={"https://airq.mustafasaifee.com"}
+                    title={
+                      "Dashboard visualizing real-time worldwide air quality levels. Learn from PM2.5 trends of most cities in the world.: https://airq.mustafasaifee.com' via @mustafasaifee42 | Data by @BerkeleyEarth"
+                    }
+                  >
+                    <TwitterIcon size={32} round={true} />
+                  </TwitterShareButton>
+                </IconEl>
+              </IconContainer>
+            </FooterContainer>
+          </Container>
+          <FooterSubNote>
+            Made in Helsinki by{" "}
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://mustafasaifee.com/"
+            >
+              Mustafa Saifee
+            </a>{" "}
+            @{" "}
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://futurice.com/Futurice"
+            >
+              Futurice
+            </a>
+          </FooterSubNote>
+        </Footer>
       </div>
     </Router>
   );

@@ -61,9 +61,9 @@ const TimeSeries = (props: PassedProps) => {
 
       const lineDataMax = d3.max(lineDataWONull, (d: any) => d["PM2.5"]);
 
-      const focusHeight = 100;
+      const focusHeight = 60;
 
-      const height = 440;
+      const height = 320;
 
       const margin = { top: 20, right: 20, bottom: 10, left: 20 };
 
@@ -298,7 +298,7 @@ const TimeSeries = (props: PassedProps) => {
           );
         focusText.html(
           `${selectedData.date.toISOString().substring(0, 16)} UTC: ${
-            selectedData["PM2.5"] ? `${selectedData["PM2.5"]}  μg / m3` : "NA"
+            selectedData["PM2.5"] ? `${selectedData["PM2.5"]}  μg/m3` : "NA"
           }`
         );
       };

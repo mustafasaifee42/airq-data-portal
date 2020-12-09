@@ -241,6 +241,20 @@ const About = () => {
         </TableRow>
       </Table>
       <br />
+      <h2>Calculation of 24 hour and Monthly Averages</h2>
+      24 hour and monthly averages are calculated using hourly data. The average
+      is caculated simply by adding all the hourly concentrations value in a day
+      or month and then dividing it by the total number of hours for which the
+      data is available.{" "}
+      <span className="italics">
+        Please note.: 24 hour (daily) averages are calculated only for days with
+        more than 12 hourly observations (atleast 50%). Monthly averages are
+        calculated only shown for months with more than 60% observations (i.e.
+        if a month has 720 hrs than it should have atleast 432 hrs of valid
+        observations).
+      </span>
+      <br />
+      <br />
       <h2>Cigarette Equivalence</h2>
       The method used for comparing air pollution to cigarette smoking can be
       found{" "}
@@ -253,14 +267,21 @@ const About = () => {
       </a>
       .{" "}
       <span className="bold">
-        1 cigarette is equivalent to an air pollution of 22 μg/m<sup>3</sup> for one day.
+        1 cigarette is equivalent to an air pollution of 22 μg/m<sup>3</sup> for
+        one day.
       </span>{" "}
-      This means breathing air with PM 2.5 concentration of 22 μg/m<sup>3</sup> is
-      equivalent to smoking 1 cigarette that day.
+      This means breathing air with PM 2.5 concentration of 22 μg/m<sup>3</sup>{" "}
+      is equivalent to smoking 1 cigarette that day.
       <br />
       <br />
       <h2>Contact</h2>
-      Please email me at{" "}
+      Project and visualizations by{" "}
+      <a target="_blank" rel="noreferrer" href="https://mustafasaifee.com/">
+        Mustafa Saifee
+      </a>
+      <br />
+      <br />
+      For suggestions, queries or feedback, please email me at{" "}
       <a
         target="_blank"
         rel="noreferrer"
@@ -275,8 +296,7 @@ const About = () => {
         href="https://twitter.com/mustafasaifee42"
       >
         twitter
-      </a>{" "}
-      for suggestions,queries or feedback.
+      </a>
     </Section>
   );
 };

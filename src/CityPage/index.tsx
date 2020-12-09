@@ -7,6 +7,16 @@ import { getSummary } from "../utils/getSummary";
 import Loader from "react-loader-spinner";
 import TimeSeries from "./TimeSeries";
 import DailyTimeSeries from "./DailyTimeSeries";
+import AirQualityStrip from "./AirQualityStrip";
+import AirQualityByTime from "./AirQualityByTime";
+import {
+  FacebookIcon,
+  TwitterIcon,
+  FacebookShareButton,
+  TwitterShareButton,
+} from "react-share";
+
+import { Sequential, Quantized } from "../Scales";
 
 const Title = styled.div`
   padding: 60px 20px 100px 20px;
@@ -98,12 +108,41 @@ const ErrorDiv = styled.div`
   font-weight: bold;
 `;
 
+const H1 = styled.h1`
+  margin: 0;
+`;
+
+const KeyEl = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+`;
+
+const ShareDiv = styled.div`
+  margin-top: 60px;
+  background-color: var(--very-light-gray);
+  padding: 40px 20px;
+`;
+
+const IconContainer = styled.div`
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+`;
+
+const IconEl = styled.div`
+  margin: 0 5px;
+`;
+
 const CityPage = (props: any) => {
   const [lastHourData, setLastHourData] = useState<any>(null);
   const [lastDayData, setLastDayData] = useState<any>(null);
   const [lastMonthData, setLastMonthData] = useState<any>(null);
   const [hourlyTS, setHourlyTS] = useState<any>(undefined);
   const [dailyTS, setDailyTS] = useState<any>(undefined);
+  const [monthTS, setMonthTS] = useState<any>(undefined);
+  const [dailyTSYearly, setDailyTSYearly] = useState<any>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -111,13 +150,14 @@ const CityPage = (props: any) => {
       `https://berkleyearth-air-quality-api.herokuapp.com/air-quality/all-data/${props.match.params.country}/${props.match.params.region}/${props.match.params.city}`
     )
       .then((d) => {
-        const summaryData:any = getSummary(d.data)
+        const summaryData: any = getSummary(d.data);
         const Date1 = new Date(`${summaryData["Most Recent"].DateTime}Z`);
         if ((new Date().getTime() - Date1.getTime()) / 3600000 <= 3)
           setLastHourData(summaryData["Most Recent"]);
         else setLastHourData("NA");
         setLastDayData(summaryData["Last Day"]);
         setLastMonthData(summaryData["Last Month"]);
+        setMonthTS(summaryData["Last 30 Days"]);
         const dailyData = summaryData["Last 2 Years Daily Averages"].map(
           (el: any) => {
             const avgVal =
@@ -134,19 +174,37 @@ const CityPage = (props: any) => {
           }
         );
         setDailyTS(dailyData);
-        const hourlyData = summaryData["Last 2 Years Hourly Data"].map((el: any) => {
-          return {
-            date: new Date(`${el.DateTime}Z`),
-            "PM2.5": el["PM2.5"],
-            PM10_mask: el.PM10_mask,
-          };
-        });
+        const hourlyData = summaryData["Last Year Hourly Data"].map(
+          (el: any) => {
+            return {
+              date: new Date(`${el.DateTime}Z`),
+              "PM2.5": el["PM2.5"],
+              PM10_mask: el.PM10_mask,
+            };
+          }
+        );
         setHourlyTS(hourlyData);
+        const dailyDataYearly = summaryData["Last Year Daily Data"].map(
+          (el: any) => {
+            const avgVal =
+              el["PM2.5"].noOfObservations /
+                el["PM2.5"].totalNoOfPossibleObservations <=
+              0.5
+                ? null
+                : el["PM2.5"].avgValue;
+            return {
+              date: new Date(`${el.Date}Z`),
+              "PM2.5_Avg": avgVal,
+              "PM2.5_Max": el["PM2.5"].maxValue,
+            };
+          }
+        );
+        setDailyTSYearly(dailyDataYearly);
       })
       .catch((e: { message: string }) => {
         setError(e.message);
       });
-      // eslint-disable-next-line
+    // eslint-disable-next-line
   }, []);
   return (
     <>
@@ -333,7 +391,9 @@ const CityPage = (props: any) => {
                 </DataValueEl>
                 <DataNote>
                   Last Month (Hourly Avg.){" "}
-                  {lastMonthData ? <SubNote>{lastMonthData.Month}</SubNote> : null}{" "}
+                  {lastMonthData ? (
+                    <SubNote>{lastMonthData.Month}</SubNote>
+                  ) : null}{" "}
                   <br />
                   {lastMonthData &&
                   lastMonthData["PM2.5"].noOfObservations /
@@ -359,9 +419,12 @@ const CityPage = (props: any) => {
               </DataCard>
             </DataCardEl>
             <TimeSeriesCard>
-              <h2>Hourly Average Time Series</h2>
-              {hourlyTS ? (
-                <TimeSeries data={hourlyTS} />
+              <h2>Air Quality Stripe (Last 365 days)</h2>
+              <KeyEl>
+                <Quantized />
+              </KeyEl>
+              {dailyTSYearly ? (
+                <AirQualityStrip data={dailyTSYearly} />
               ) : (
                 <div>
                   <Loader type="Oval" color="#00BFFF" height={50} width={50} />
@@ -369,7 +432,20 @@ const CityPage = (props: any) => {
               )}
             </TimeSeriesCard>
             <TimeSeriesCard>
-              <h2>Daily Average Time Series</h2>
+              <h2>Air Quality by Time of Day</h2>
+              <KeyEl>
+                <Sequential />
+              </KeyEl>
+              {monthTS ? (
+                <AirQualityByTime data={monthTS} />
+              ) : (
+                <div>
+                  <Loader type="Oval" color="#00BFFF" height={50} width={50} />
+                </div>
+              )}
+            </TimeSeriesCard>
+            <TimeSeriesCard>
+              <h2>Daily Average Time Series (Last 2 years)</h2>
               {dailyTS ? (
                 <DailyTimeSeries data={dailyTS} />
               ) : (
@@ -378,7 +454,105 @@ const CityPage = (props: any) => {
                 </div>
               )}
             </TimeSeriesCard>
+            <TimeSeriesCard>
+              <h2>Hourly Average Time Series (Last 365 days)</h2>
+              {hourlyTS ? (
+                <TimeSeries data={hourlyTS} />
+              ) : (
+                <div>
+                  <Loader type="Oval" color="#00BFFF" height={50} width={50} />
+                </div>
+              )}
+            </TimeSeriesCard>
           </Container>
+          <ShareDiv>
+            <H1>Share this page</H1>
+            {lastDayData ? (
+              <IconContainer>
+                <IconEl>
+                  <FacebookShareButton
+                    url={`https://airq.mustafasaifee.com/${props.match.params.country}/${props.match.params.region}/${props.match.params.city}`}
+                    quote={`${
+                      lastDayData["PM2.5"].noOfObservations > 12
+                        ? `PM2.5 concentration in ${props.match.params.city.replace(
+                            /_/g,
+                            " "
+                          )} yesterday was ${lastDayData[
+                            "PM2.5"
+                          ].avgValue.toFixed(
+                            2
+                          )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
+                            lastDayData["PM2.5"].avgValue / 22
+                          ).toFixed(1)} cigarettes.`
+                        : `Get realtime air quality for ${props.match.params.city.replace(
+                            /_/g,
+                            " "
+                          )}`
+                    }`}
+                  >
+                    <FacebookIcon size={40} round={true} />
+                  </FacebookShareButton>
+                </IconEl>
+                <IconEl>
+                  <TwitterShareButton
+                    url={`https://airq.mustafasaifee.com/${props.match.params.country}/${props.match.params.region}/${props.match.params.city}`}
+                    title={`${
+                      lastDayData["PM2.5"].noOfObservations > 12
+                        ? `PM2.5 concentration in ${props.match.params.city.replace(
+                            /_/g,
+                            " "
+                          )} yesterday was ${lastDayData[
+                            "PM2.5"
+                          ].avgValue.toFixed(
+                            2
+                          )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
+                            lastDayData["PM2.5"].avgValue / 22
+                          ).toFixed(1)} cigarettes. `
+                        : ""
+                    }Get realtime air quality for ${props.match.params.city.replace(
+                      /_/g,
+                      " "
+                    )}: https://airq.mustafasaifee.com/${
+                      props.match.params.country
+                    }/${props.match.params.region}/${
+                      props.match.params.city
+                    } via @mustafasaifee42, Data by @BerkeleyEarth`}
+                  >
+                    <TwitterIcon size={40} round={true} />
+                  </TwitterShareButton>
+                </IconEl>
+              </IconContainer>
+            ) : (
+              <IconContainer>
+                <IconEl>
+                  <FacebookShareButton
+                    url={`https://airq.mustafasaifee.com/${props.match.params.country}/${props.match.params.region}/${props.match.params.city}`}
+                    quote={`Get realtime air quality for ${props.match.params.city.replace(
+                      /_/g,
+                      " "
+                    )}`}
+                  >
+                    <FacebookIcon size={40} round={true} />
+                  </FacebookShareButton>
+                </IconEl>
+                <IconEl>
+                  <TwitterShareButton
+                    url={`https://airq.mustafasaifee.com/${props.match.params.country}/${props.match.params.region}/${props.match.params.city}`}
+                    title={`Get realtime air quality for ${props.match.params.city.replace(
+                      /_/g,
+                      " "
+                    )}: https://airq.mustafasaifee.com/${
+                      props.match.params.country
+                    }/${props.match.params.region}/${
+                      props.match.params.city
+                    } via @mustafasaifee42, Data by @BerkeleyEarth`}
+                  >
+                    <TwitterIcon size={40} round={true} />
+                  </TwitterShareButton>
+                </IconEl>
+              </IconContainer>
+            )}
+          </ShareDiv>
         </>
       )}
     </>

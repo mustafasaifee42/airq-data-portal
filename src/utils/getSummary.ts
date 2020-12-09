@@ -16,6 +16,7 @@ export const getSummary = (dataAsObj: any) => {
   )}-${formatNumber(new Date().getDate())}`;
   const dateTimeValue = getHours(new Date(startDate), new Date(endDate));
   const dateTimeValueDaily = getHours(new Date(startDateDaily), new Date(endDate));
+  const dataFinalDailyYearly = getDailyData(dataAsObj, dateTimeValue);
   const dataFinalHourly = getHourlyData(dataAsObj, dateTimeValue);
   const dataFinalDaily = getDailyData(dataAsObj, dateTimeValueDaily);
   const StartDate30DaysTemp = new Date();
@@ -59,7 +60,8 @@ export const getSummary = (dataAsObj: any) => {
     "Last Day": dataFinalYest[0],
     "Last 30 Days": dataFinalHourly30Days,
     "Last Month": dataFinalLastMonth[0],
-    "Last 2 Years Hourly Data": dataFinalHourly,
+    "Last Year Hourly Data": dataFinalHourly,
+    "Last Year Daily Data": dataFinalDailyYearly,
     "Last 2 Years Daily Averages": dataFinalDaily,
   };
   return data;

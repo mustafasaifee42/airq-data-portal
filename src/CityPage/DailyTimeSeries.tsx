@@ -61,9 +61,9 @@ const TimeSeries = (props: PassedProps) => {
 
       const lineDataMax = d3.max(lineDataWONull, (d: any) => d["PM2.5_Max"]);
 
-      const focusHeight = 100;
+      const focusHeight = 60;
 
-      const height = 440;
+      const height = 320;
 
       const margin = { top: 20, right: 20, bottom: 10, left: 20 };
 
@@ -348,14 +348,14 @@ const TimeSeries = (props: PassedProps) => {
             .toISOString()
             .substring(0, 10)} (24 hours avg.): ${
             selectedData["PM2.5_Avg"]
-              ? `${selectedData["PM2.5_Avg"].toFixed(1)}  μg / m3`
+              ? `${selectedData["PM2.5_Avg"].toFixed(1)}  μg/m3`
               : "NA"
           }`
         );
         focusTextMaxValue.html(
           `${selectedData.date.toISOString().substring(0, 10)} (Max Value): ${
             selectedData["PM2.5_Max"]
-              ? `${selectedData["PM2.5_Max"].toFixed(1)}  μg / m3`
+              ? `${selectedData["PM2.5_Max"].toFixed(1)}  μg/m3`
               : "NA"
           }`
         );

@@ -8,6 +8,7 @@ const getHourlyData = (data, dateTimes) => {
       obj["DateTime"] = date;
       obj["PM2.5"] = null;
       obj["PM10_mask"] = null;
+      obj["Date"] = date.split("T")[0];
     } else obj = data[indx];
     return obj;
   });

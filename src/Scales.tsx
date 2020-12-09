@@ -6,6 +6,8 @@ export const Sequential: React.FC = () => (
     xmlns="http://www.w3.org/2000/svg"
     x="0px"
     y="0px"
+    width="361"
+    height="28"
     viewBox="0 0 361 28"
   >
     <g>
@@ -166,6 +168,8 @@ export const Quantized: React.FC = () => (
     xmlns="http://www.w3.org/2000/svg"
     x="0px"
     y="0px"
+    width="361"
+    height="56"
     viewBox="0 0 361 56"
   >
     <g>
