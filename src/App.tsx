@@ -127,6 +127,9 @@ const Logo = styled.div`
     text-decoration: none;
     font-style: normal;
   }
+  a:hover {
+    font-weight: inherit;
+  }
 `;
 
 const RedSpan = styled.span`

@@ -283,7 +283,9 @@ const CityPage = (props: any) => {
                       data={
                         lastDayData === "NA"
                           ? lastDayData
-                          : (lastDayData["PM2.5"].avgValue).toFixed(1)
+                          : lastDayData["PM2.5"].avgValue === null
+                          ? "NA"
+                          : lastDayData["PM2.5"].avgValue.toFixed(1)
                       }
                       particleWidth={particleWidth}
                       city={props.match.params.city.replace(/_/g, " ")}
@@ -304,7 +306,7 @@ const CityPage = (props: any) => {
                   Yesterday (Hourly Avg.){" "}
                   {lastDayData ? <SubNote>{lastDayData.Date}</SubNote> : null}{" "}
                   <br />
-                  {lastDayData && lastDayData !== "NA" ? (
+                  {lastDayData && lastDayData !== "NA" && lastDayData["PM2.5"].avgValue !== null? (
                     <>
                       <Span>
                         Breathing this air for whole day is equivalent to
@@ -330,7 +332,7 @@ const CityPage = (props: any) => {
                       data={
                         lastMonthData["PM2.5"].noOfObservations /
                           lastMonthData["PM2.5"].totalNoOfPossibleObservations <
-                        0.6
+                        0.6 || lastMonthData["PM2.5"].avgValue === null
                           ? "NA"
                           : lastMonthData["PM2.5"].avgValue.toFixed(1)
                       }
@@ -358,7 +360,7 @@ const CityPage = (props: any) => {
                   {lastMonthData &&
                   lastMonthData["PM2.5"].noOfObservations /
                     lastMonthData["PM2.5"].totalNoOfPossibleObservations >
-                    0.6 ? (
+                    0.6 && lastMonthData["PM2.5"].avgValue !== null ? (
                     <>
                       <Span>
                         Breathing this air for month is equivalent to smoking{" "}
