@@ -27,7 +27,7 @@ const GlobalStyle = createGlobalStyle`
     --dark-gray: #999999;
     --primary-color: #EA4136;
     --primary-color-hover: #0aa5c2;
-    --very-light-gray: #f5f5f5;
+    --very-light-gray: #f6f6f6;
     --light-gray: #e5e5e5;
     --gray: #aaaaaa;
     --bg-color: #faf5eb;
@@ -101,7 +101,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   .select__control{
-    background-color:var(--light-gray) !important;
+    background-color:var(--very-light-gray) !important;
     border-radius:0 !important;
     border: 0 !important;
   }
