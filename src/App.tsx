@@ -4,7 +4,21 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Home from "./Home";
 import About from "./About";
 import CityPage from "./CityPage";
-import { FacebookIcon, TwitterIcon, FacebookShareButton, TwitterShareButton } from "react-share";
+import {
+  FacebookIcon,
+  TwitterIcon,
+  FacebookShareButton,
+  TwitterShareButton,
+} from "react-share";
+import Select from "react-select";
+import cityList from "./data/cityList.json";
+// import ReactGA from 'react-ga';
+
+/*
+ReactGA.initialize('UA-160446912-1');
+ReactGA.set({ anonymizeIp: true });
+ReactGA.pageview('/');
+*/
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -85,6 +99,12 @@ const GlobalStyle = createGlobalStyle`
     background: rgba(255,255,255,0.5);
     pointer-events: none;
   }
+
+  .select__control{
+    background-color:var(--light-gray) !important;
+    border-radius:0 !important;
+    border: 0 !important;
+  }
 `;
 
 const Header = styled.header`
@@ -92,7 +112,7 @@ const Header = styled.header`
   height: 50px;
   background-color: var(--white);
   display: flex;
-  padding: 20px 0 10px 0;
+  padding: 10px 0;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--gray);
@@ -127,6 +147,7 @@ const BlackSpan = styled.span`
 const Navigation = styled.div`
   font-size: 16px;
   display: flex;
+  align-items: center;
 `;
 const NavEl = styled.div`
   margin: 0 20px;
@@ -172,7 +193,19 @@ const IconEl = styled.div`
   margin-right: 10px;
 `;
 
+const SelectEl = styled.div`
+  width: 300px;
+`;
+
 const App = () => {
+  const cityOption = cityList.map((d: any) => {
+    return {
+      label: `${d.cityName}, ${d.regionName}, ${d.countryName}`,
+      city: d.cityName,
+      region: d.regionName,
+      country: d.countryName,
+    };
+  });
   return (
     <Router>
       <div>
@@ -185,6 +218,32 @@ const App = () => {
             </Link>
           </Logo>
           <Navigation>
+            <NavEl>
+              <SelectEl>
+                <Select
+                  className="basic-single"
+                  classNamePrefix="select"
+                  isDisabled={false}
+                  isClearable={true}
+                  isSearchable={true}
+                  name="citySelection"
+                  options={cityOption}
+                  placeholder={"Search a city"}
+                  value={null}
+                  onChange={(e: any) => {
+                    if (e) {
+                      window.location.href = `/${e.country.replace(
+                        / /g,
+                        "_"
+                      )}/${e.region.replace(/ /g, "_")}/${e.city.replace(
+                        / /g,
+                        "_"
+                      )}`;
+                    }
+                  }}
+                />
+              </SelectEl>
+            </NavEl>
             <NavEl>
               <Link to="/">Map</Link>
             </NavEl>

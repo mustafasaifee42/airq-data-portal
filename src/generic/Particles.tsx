@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { select } from "d3-selection";
 import styled from "styled-components";
 import { timer } from "d3-timer";
@@ -8,7 +8,6 @@ interface PassedProps {
   width: number;
   height: number;
   density: number;
-  id: string;
   note: string;
 }
 
@@ -44,13 +43,13 @@ const TextDiv = styled.div<Dimensions>`
   text-align: center;
 `;
 
-const drawCanvas = (width:number, height:number, density:number, id:string) => {
+const drawCanvas = (width:number, height:number, density:number, particleCanvas: any) => {
   const fill: string = "rgba(5, 5, 5, 0.5)";
   const stroke: string = "rgba(255,255,255, 1)";
   const radiusMin: number = 2;
   const radiusMax: number = 4;
-  select(`#${id}`).selectAll("canvas").remove();
-  const canvas: any = select(`#${id}`)
+  select(particleCanvas).selectAll("canvas").remove();
+  const canvas: any = select(particleCanvas)
     .append("canvas")
     .attr("width", `${width-2}px`)
     .attr("height", `${height}px`);
@@ -129,13 +128,17 @@ const drawCanvas = (width:number, height:number, density:number, id:string) => {
 const Particles: React.FunctionComponent<PassedProps> = (
   props: PassedProps
 ) => {
-  const { width, height, density, id, note } = props;
+  const ParticleCanvas = useRef(null)
+  const { width, height, density, note } = props;
   useEffect(() => {
-    drawCanvas(width, height, density, id);
-  });
+    if (ParticleCanvas.current && ParticleCanvas !== null) {
+      drawCanvas(width, height, density, ParticleCanvas.current);
+    }
+    // eslint-disable-next-line
+  },[]);
   return (
     <RootEl width={width} height={height} >
-      <ParticleDiv id={id} className="particleDiv" width={width} height={height} />
+      <ParticleDiv ref={ParticleCanvas} className="particleDiv" width={width} height={height} />
       <TextDiv width={width} height={height}>{note}</TextDiv>
     </RootEl>
   );

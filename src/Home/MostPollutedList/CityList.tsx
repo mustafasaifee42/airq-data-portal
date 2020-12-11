@@ -91,7 +91,6 @@ export const CityList = (props: PassedProps) => {
             countryID={city.country.replace(/ /g, "_")}
             regionID={city.region.replace(/ /g, "_")}
             value={city["PM2.5"]["Last Hour"]}
-            index={i}
             ranking={i + 1}
           />
         );
@@ -141,24 +140,22 @@ export const CityList = (props: PassedProps) => {
           if (selectedCityData.length > 0)
             return (
               <CityCard
-                key={i}
+                key={`selectedCityData${i}`}
                 city={selectedCityData[0].city}
                 country={selectedCityData[0].country}
                 cityID={selectedCityData[0].city.replace(/ /g, "_")}
                 countryID={selectedCityData[0].country.replace(/ /g, "_")}
                 regionID={selectedCityData[0].region.replace(/ /g, "_")}
                 value={selectedCityData[0]["PM2.5"]["Last Hour"]}
-                index={10 + i}
                 ranking={ranking + 1}
               />
             );
           return (
             <CityCard
-              key={i}
+              key={`selectedCityData${i}`}
               city={city.city}
               country={city.country}
               value={null}
-              index={10 + i}
               cityID={city.city.replace(/ /g, "_")}
               countryID={city.country.replace(/ /g, "_")}
               regionID={city.region.replace(/ /g, "_")}

@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Axios from "axios";
 import styled from "styled-components";
-import { HealthTag } from "../generic/HealthTag";
-import { getHealthStatus } from "../utils/getHealthStatus";
 import { getSummary } from "../utils/getSummary";
 import Loader from "react-loader-spinner";
 import TimeSeries from "./TimeSeries";
@@ -15,6 +13,8 @@ import {
   FacebookShareButton,
   TwitterShareButton,
 } from "react-share";
+import * as d3 from "d3";
+import DataCard from "./DataCard";
 
 import { Sequential, Quantized } from "../Scales";
 
@@ -39,7 +39,7 @@ const CountryName = styled.span`
   color: var(--gray);
 `;
 
-const DataCardEl = styled.div`
+const DataCardContainer = styled.div`
   display: flex;
   padding: 20px 0;
   margin: -60px 0 20px 0;
@@ -56,7 +56,7 @@ const TimeSeriesCard = styled.div`
   width: calc(100%-40px);
 `;
 
-const DataCard = styled.div`
+const DataCardEl = styled.div`
   width: 30%;
   padding: 0 20px;
   border-right: 1px solid var(--light-gray);
@@ -68,10 +68,6 @@ const DataCard = styled.div`
 const DataValueEl = styled.div`
   display: flex;
   align-items: center;
-`;
-
-const DataValue = styled.div`
-  font-size: 40px;
 `;
 
 const DataNote = styled.div`
@@ -144,7 +140,16 @@ const CityPage = (props: any) => {
   const [monthTS, setMonthTS] = useState<any>(undefined);
   const [dailyTSYearly, setDailyTSYearly] = useState<any>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
+  const [particleWidth, setParticleWidth] = useState<number>(100);
 
+  const GraphRef = useRef(null);
+  useEffect(() => {
+    if (GraphRef.current && GraphRef !== null) {
+      const graphDiv = d3.select(GraphRef.current);
+      const width = parseInt(graphDiv.style("width").slice(0, -2), 10);
+      setParticleWidth(width);
+    }
+  }, []);
   useEffect(() => {
     Axios.get(
       `https://berkleyearth-air-quality-api.herokuapp.com/air-quality/all-data/${props.match.params.country}/${props.match.params.region}/${props.match.params.city}`
@@ -222,42 +227,31 @@ const CityPage = (props: any) => {
       ) : (
         <>
           <Container>
-            <DataCardEl>
-              <DataCard>
-                <DataValueEl>
+            <DataCardContainer>
+              <DataCardEl ref={GraphRef}>
+                <>
                   {lastHourData ? (
-                    lastHourData !== "NA" ? (
-                      <>
-                        <DataValue>{lastHourData["PM2.5"]}</DataValue>
-                        <HealthTag
-                          backgroundColor={
-                            getHealthStatus(lastHourData["PM2.5"])
-                              ?.backgroundColor
-                          }
-                          color={getHealthStatus(lastHourData["PM2.5"])?.color}
-                          text={getHealthStatus(lastHourData["PM2.5"])?.value}
-                          truncate={
-                            getHealthStatus(lastHourData["PM2.5"])?.value ===
-                            "Unhealthy for sensitive groups"
-                              ? true
-                              : false
-                          }
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <DataValue>{lastHourData}</DataValue>
-                      </>
-                    )
-                  ) : (
-                    <Loader
-                      type="Oval"
-                      color="#00BFFF"
-                      height={50}
-                      width={50}
+                    <DataCard
+                      data={
+                        lastHourData === "NA"
+                          ? lastHourData
+                          : lastHourData["PM2.5"]
+                      }
+                      particleWidth={particleWidth}
+                      city={props.match.params.city.replace(/_/g, " ")}
+                      text={"Last hour's"}
                     />
+                  ) : (
+                    <DataValueEl>
+                      <Loader
+                        type="Oval"
+                        color="#00BFFF"
+                        height={50}
+                        width={50}
+                      />
+                    </DataValueEl>
                   )}
-                </DataValueEl>
+                </>
                 <DataNote>
                   Last Hour
                   <br />
@@ -281,48 +275,31 @@ const CityPage = (props: any) => {
                     </>
                   ) : null}
                 </DataNote>
-              </DataCard>
-              <DataCard>
-                <DataValueEl>
+              </DataCardEl>
+              <DataCardEl>
+                <>
                   {lastDayData ? (
-                    lastDayData["PM2.5"].noOfObservations > 12 ? (
-                      <>
-                        <DataValue>
-                          {lastDayData["PM2.5"].avgValue.toFixed(2)}
-                        </DataValue>
-                        <HealthTag
-                          backgroundColor={
-                            getHealthStatus(lastDayData["PM2.5"].avgValue)
-                              ?.backgroundColor
-                          }
-                          color={
-                            getHealthStatus(lastDayData["PM2.5"].avgValue)
-                              ?.color
-                          }
-                          text={
-                            getHealthStatus(lastDayData["PM2.5"].avgValue)
-                              ?.value
-                          }
-                          truncate={
-                            getHealthStatus(lastDayData["PM2.5"].avgValue)
-                              ?.value === "Unhealthy for sensitive groups"
-                              ? true
-                              : false
-                          }
-                        />
-                      </>
-                    ) : (
-                      <DataValue>NA</DataValue>
-                    )
-                  ) : (
-                    <Loader
-                      type="Oval"
-                      color="#00BFFF"
-                      height={50}
-                      width={50}
+                    <DataCard
+                      data={
+                        lastDayData === "NA"
+                          ? lastDayData
+                          : (lastDayData["PM2.5"].avgValue).toFixed(1)
+                      }
+                      particleWidth={particleWidth}
+                      city={props.match.params.city.replace(/_/g, " ")}
+                      text={"Yesterday's"}
                     />
+                  ) : (
+                    <DataValueEl>
+                      <Loader
+                        type="Oval"
+                        color="#00BFFF"
+                        height={50}
+                        width={50}
+                      />
+                    </DataValueEl>
                   )}
-                </DataValueEl>
+                </>
                 <DataNote>
                   Yesterday (Hourly Avg.){" "}
                   {lastDayData ? <SubNote>{lastDayData.Date}</SubNote> : null}{" "}
@@ -345,50 +322,33 @@ const CityPage = (props: any) => {
                     </>
                   ) : null}
                 </DataNote>
-              </DataCard>
-              <DataCard>
-                <DataValueEl>
+              </DataCardEl>
+              <DataCardEl>
+                <>
                   {lastMonthData ? (
-                    lastMonthData["PM2.5"].noOfObservations /
-                      lastMonthData["PM2.5"].totalNoOfPossibleObservations >
-                    0.6 ? (
-                      <>
-                        <DataValue>
-                          {lastMonthData["PM2.5"].avgValue.toFixed(2)}
-                        </DataValue>
-                        <HealthTag
-                          backgroundColor={
-                            getHealthStatus(lastMonthData["PM2.5"].avgValue)
-                              ?.backgroundColor
-                          }
-                          color={
-                            getHealthStatus(lastMonthData["PM2.5"].avgValue)
-                              ?.color
-                          }
-                          text={
-                            getHealthStatus(lastMonthData["PM2.5"].avgValue)
-                              ?.value
-                          }
-                          truncate={
-                            getHealthStatus(lastMonthData["PM2.5"].avgValue)
-                              ?.value === "Unhealthy for sensitive groups"
-                              ? true
-                              : false
-                          }
-                        />
-                      </>
-                    ) : (
-                      <DataValue>NA</DataValue>
-                    )
-                  ) : (
-                    <Loader
-                      type="Oval"
-                      color="#00BFFF"
-                      height={50}
-                      width={50}
+                    <DataCard
+                      data={
+                        lastMonthData["PM2.5"].noOfObservations /
+                          lastMonthData["PM2.5"].totalNoOfPossibleObservations <
+                        0.6
+                          ? "NA"
+                          : lastMonthData["PM2.5"].avgValue.toFixed(1)
+                      }
+                      particleWidth={particleWidth}
+                      city={props.match.params.city.replace(/_/g, " ")}
+                      text={"Last Month's"}
                     />
+                  ) : (
+                    <DataValueEl>
+                      <Loader
+                        type="Oval"
+                        color="#00BFFF"
+                        height={50}
+                        width={50}
+                      />
+                    </DataValueEl>
                   )}
-                </DataValueEl>
+                </>
                 <DataNote>
                   Last Month (Hourly Avg.){" "}
                   {lastMonthData ? (
@@ -416,8 +376,8 @@ const CityPage = (props: any) => {
                     </>
                   ) : null}
                 </DataNote>
-              </DataCard>
-            </DataCardEl>
+              </DataCardEl>
+            </DataCardContainer>
             <TimeSeriesCard>
               <h2>Air Quality Stripe (Last 365 days)</h2>
               <KeyEl>

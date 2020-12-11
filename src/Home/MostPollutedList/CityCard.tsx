@@ -13,7 +13,6 @@ interface PassedProps {
   countryID: string;
   regionID: string;
   value: number | null;
-  index: number;
   ranking?: number;
 }
 const CityEl = styled.div`
@@ -69,7 +68,6 @@ export const CityCard = (props: PassedProps) => {
     countryID,
     regionID,
     value,
-    index,
     ranking,
   }  = props;
   if (value)
@@ -102,14 +100,12 @@ export const CityCard = (props: PassedProps) => {
           <Particles
             width={286 / 2}
             height={286}
-            id={`ParticleGood${index}`}
             density={12}
             note={"Good Air Quality"}
           />
           <Particles
             width={286 / 2}
             height={286}
-            id={`Particle${index}`}
             density={value}
             note={`Air Quality in ${city}`}
           />
