@@ -1,6 +1,6 @@
 const { groups, min, max, mean } = require("d3-array");
 
-const getHourlyData = (data, dateTimes) => {
+export const getHourlyData = (data, dateTimes) => {
   let dataFinal = dateTimes.map((date) => {
     const indx = data.findIndex((d1) => d1.DateTime === date);
     let obj = {};
@@ -15,7 +15,7 @@ const getHourlyData = (data, dateTimes) => {
   return dataFinal;
 };
 
-const getDailyData = (data, dateTimes) => {
+export const getDailyData = (data, dateTimes) => {
   let dataTemp = dateTimes.map((date) => {
     const indx = data.findIndex((d1) => d1.DateTime === date);
     let obj = {};
@@ -65,7 +65,7 @@ const getDailyData = (data, dateTimes) => {
   return dataFinal;
 };
 
-const getMonthlyData = (data, dateTimes) => {
+export const getMonthlyData = (data, dateTimes) => {
   let dataTemp = dateTimes.map((date) => {
     const indx = data.findIndex((d1) => d1.DateTime === date);
     let obj = {};
@@ -114,5 +114,3 @@ const getMonthlyData = (data, dateTimes) => {
   });
   return dataFinal;
 };
-
-module.exports = { getHourlyData, getDailyData, getMonthlyData };
