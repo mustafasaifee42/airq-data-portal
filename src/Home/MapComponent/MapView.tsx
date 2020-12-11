@@ -77,7 +77,7 @@ export const MapView = (props: PassedProp) => {
       <LayersControl position="topright" collapsed={false}>
         <LayersControl.BaseLayer checked name="Sequential">
           <ImageOverlay
-            url={"./airQualitySequentialMap.png"}
+            url={"https://raw.githubusercontent.com/mustafasaifee42/air-quality-grid-map-image-data/main/airQualitySequentialMap.png"}
             bounds={[
               [-85, -180],
               [85, 180],
@@ -88,7 +88,7 @@ export const MapView = (props: PassedProp) => {
         </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="Categorical">
           <ImageOverlay
-            url={"./airQualityHealthMap.png"}
+            url={"https://raw.githubusercontent.com/mustafasaifee42/air-quality-grid-map-image-data/main/airQualityHealthMap.png"}
             bounds={[
               [-85, -180],
               [85, 180],

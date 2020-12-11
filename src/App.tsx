@@ -55,7 +55,7 @@ const GlobalStyle = createGlobalStyle`
   h1 {
     margin: 0 0 40px 0;
     font-size: 28px;
-    font-family: IBM Plex Serif, serif;
+    font-family: IBM Plex Sans, sans-serif;
     color:var(--primary-color);
     text-align: center;
   }
@@ -99,12 +99,6 @@ const GlobalStyle = createGlobalStyle`
     background: rgba(255,255,255,0.5);
     pointer-events: none;
   }
-
-  .select__control{
-    background-color:var(--very-light-gray) !important;
-    border-radius:0 !important;
-    border: 0 !important;
-  }
 `;
 
 const Header = styled.header`
@@ -129,19 +123,20 @@ const Logo = styled.div`
   display: flex;
   font-size: 30px;
   margin-left: 20px;
+  a {
+    text-decoration: none;
+    font-style: normal;
+  }
 `;
 
 const RedSpan = styled.span`
   color: var(--primary-color);
-  font-family: IBM Plex Serif, serif;
-  font-style: italic;
-  font-weight: 600;
-  margin-right: 5px;
+  font-family: IBM Plex Sans, sans-serif;
+  font-weight: 700;
 `;
 
 const BlackSpan = styled.span`
   color: var(--black);
-  font-weight: 600;
 `;
 
 const Navigation = styled.div`
@@ -195,6 +190,13 @@ const IconEl = styled.div`
 
 const SelectEl = styled.div`
   width: 300px;
+
+
+  .select__control{
+    background-color:var(--very-light-gray) !important;
+    border-radius:0 !important;
+    border: 0 !important;
+  }
 `;
 
 const App = () => {
@@ -214,7 +216,7 @@ const App = () => {
           <Logo>
             <Link to="/">
               <RedSpan>AirQ</RedSpan>
-              <BlackSpan>Data Portal</BlackSpan>
+              <BlackSpan>DataPortal</BlackSpan>
             </Link>
           </Logo>
           <Navigation>

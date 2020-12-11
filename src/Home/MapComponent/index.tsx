@@ -6,8 +6,10 @@ import { getHealthStatus } from "../../utils/getHealthStatus";
 import { HealthTag } from "../../generic/HealthTag";
 import { Sequential, Quantized } from "../../Scales";
 
-// tslint:disable-next-line: no-var-requires
-const data = require("../../data/airQualityData.json");
+
+interface PassedProps {
+  data:any;
+}
 
 interface MapMode {
   mode: string;
@@ -71,7 +73,8 @@ const ColorScale = styled.div<ColorScaleType>`
 `;
 
 
-const MapComponent = () => {
+const MapComponent = (props:PassedProps) => {
+  const {data} = props;
   const [mode, setMode] = useState("Light Mode");
   const [colorScale, setColorScale] = useState("Sequential");
   const [city, setCity] = useState(null);
@@ -86,6 +89,7 @@ const MapComponent = () => {
       )
     : null;
   const healthLevel = dataValue ? getHealthStatus(dataValue.value) : null;
+  // tslint:disable-next-line: no-floating-promises
   useEffect(() => {
     if (coordinates) {
       // tslint:disable-next-line: no-floating-promises
