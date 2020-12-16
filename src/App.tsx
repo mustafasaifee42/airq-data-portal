@@ -149,7 +149,6 @@ const Navigation = styled.div`
 `;
 const NavEl = styled.div`
   margin: 0 20px;
-
   a {
     text-decoration: none;
     font-style: normal;
@@ -226,6 +225,10 @@ const App = () => {
             <NavEl>
               <SelectEl>
                 <Select
+                  styles={{
+                    // Fixes the overlapping problem of the component
+                    menu: provided => ({ ...provided, zIndex: 9999 })
+                  }}
                   className="basic-single"
                   classNamePrefix="select"
                   isDisabled={false}
