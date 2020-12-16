@@ -12,13 +12,12 @@ import {
 } from "react-share";
 import Select from "react-select";
 import cityList from "./data/cityList.json";
-// import ReactGA from 'react-ga';
+import ReactGA from 'react-ga';
 
-/*
-ReactGA.initialize('UA-160446912-1');
+
+ReactGA.initialize('UA-185648012-1');
 ReactGA.set({ anonymizeIp: true });
 ReactGA.pageview('/');
-*/
 
 const GlobalStyle = createGlobalStyle`
   :root {
