@@ -158,6 +158,16 @@ const CityEl = styled.div`
   font-style: normal;
 `;
 
+const ShowMoreLess  =styled.button`
+  margin: 20px 10px;
+  padding: 10px;
+  background-color: var(--primary-color);
+  border: 0;
+  border-radius: 5px;
+  color: var(--white);
+  font-size: 16px;
+`;
+
 const CityPage = (props: any) => {
   const [lastHourData, setLastHourData] = useState<any>(null);
   const [lastDayData, setLastDayData] = useState<any>(null);
@@ -168,6 +178,7 @@ const CityPage = (props: any) => {
   const [dailyTSYearly, setDailyTSYearly] = useState<any>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
   const [particleWidth, setParticleWidth] = useState<number>(100);
+  const [showMore, setShowMore] = useState<boolean>(true);
 
   const GraphRef = useRef(null);
   useEffect(() => {
@@ -274,7 +285,7 @@ const CityPage = (props: any) => {
                       data={
                         lastHourData === "NA"
                           ? lastHourData
-                          : lastHourData["PM2.5"]
+                          : lastHourData["PM2.5"].toFixed(1)
                       }
                       particleWidth={particleWidth}
                       city={props.match.params.region.replace(/_/g, " ")}
@@ -483,14 +494,25 @@ const CityPage = (props: any) => {
                   }),
                   "cityID",
                   "asc"
-                ).map((city) => (
-                  <Link
-                    to={`/${props.match.params.country}/${props.match.params.region}/${city.cityID}`}
-                  >
-                    <CityEl>{city.cityName}</CityEl>
-                  </Link>
-                ))}
+                ).map((city: any, i) =>
+                  showMore ? (
+                    i < 20 ? (
+                      <Link
+                        to={`/${props.match.params.country}/${props.match.params.region}/${city.cityID}`}
+                      >
+                        <CityEl>{city.cityName}</CityEl>
+                      </Link>
+                    ) : null
+                  ) : (
+                    <Link
+                      to={`/${props.match.params.country}/${props.match.params.region}/${city.cityID}`}
+                    >
+                      <CityEl>{city.cityName}</CityEl>
+                    </Link>
+                  )
+                )}
               </CityListContainer>
+              <ShowMoreLess onClick={() => {setShowMore(!showMore)}}>{ showMore ? 'Show More' : 'Show Less'}</ShowMoreLess>
             </Container>
           </CityListEl>
           <ShareDiv>

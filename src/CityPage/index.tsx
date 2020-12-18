@@ -260,7 +260,7 @@ const CityPage = (props: any) => {
                       data={
                         lastHourData === "NA"
                           ? lastHourData
-                          : lastHourData["PM2.5"]
+                          : lastHourData["PM2.5"].toFixed(1)
                       }
                       particleWidth={particleWidth}
                       city={props.match.params.city.replace(/_/g, " ")}
