@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { HealthTag } from "../generic/HealthTag";
+import { HealthTag } from "./HealthTag";
 import { getHealthStatus } from "../utils/getHealthStatus";
-import Particles from "../generic/Particles";
+import Particles from "./Particles";
 
 interface PassedProps {
   data: number | "NA";

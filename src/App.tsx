@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Home from "./Home";
 import About from "./About";
 import CityPage from "./CityPage";
+import RegionPage from "./RegionPage";
+import CountryPage from "./CountryPage";
 import {
   FacebookIcon,
   TwitterIcon,
@@ -28,6 +30,7 @@ const GlobalStyle = createGlobalStyle`
     --primary-color-hover: #0aa5c2;
     --very-light-gray: #f6f6f6;
     --light-gray: #e5e5e5;
+    --moderate-light-gray: #f1f1f1;
     --gray: #aaaaaa;
     --bg-color: #faf5eb;
     --secondary-color: #4385F5;
@@ -267,6 +270,18 @@ const App = () => {
             path="/:country/:region/:city"
             render={(props) => {
               return <CityPage {...props} />;
+            }}
+          />
+          <Route
+            path="/:country/:region"
+            render={(props) => {
+              return <RegionPage {...props} />;
+            }}
+          />
+          <Route
+            path="/:country"
+            render={(props) => {
+              return <CountryPage {...props} />;
             }}
           />
           <Route path="/">

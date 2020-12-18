@@ -16,6 +16,8 @@ import {
 import * as d3 from "d3";
 import DataCard from "../generic/DataCard";
 import { Link } from "react-router-dom";
+import cityList from "../data/cityList.json";
+import _ from "lodash";
 
 import { Sequential, Quantized } from "../Scales";
 
@@ -33,11 +35,6 @@ const CityName = styled.span`
   font-size: 40px;
   font-weight: bold;
   color: var(--black);
-`;
-
-const CountryName = styled.span`
-  font-size: 28px;
-  color: var(--gray);
 `;
 
 const DataCardContainer = styled.div`
@@ -117,7 +114,6 @@ const KeyEl = styled.div`
 `;
 
 const ShareDiv = styled.div`
-  margin-top: 60px;
   background-color: var(--very-light-gray);
   padding: 40px 20px;
 `;
@@ -136,6 +132,26 @@ const BreadCrumb = styled.div`
   font-size: 14px;
   color: var(--gray);
   margin-bottom: 30px;
+`
+
+const CityListEl = styled.div`
+  margin-top: 60px;
+  background-color: var(--moderate-light-gray);
+  padding: 40px 20px;
+`;
+
+const CityListContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+const CityEl = styled.div`
+  margin: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: var(--light-gray);
+  color: var(--black);
+  font-style: normal;
 `;
 
 const CityPage = (props: any) => {
@@ -159,12 +175,12 @@ const CityPage = (props: any) => {
   }, []);
   useEffect(() => {
     Axios.get(
-      `https://berkleyearth-air-quality-api.herokuapp.com/air-quality/all-data/${props.match.params.country}/${props.match.params.region}/${props.match.params.city}`
+      `https://berkleyearth-air-quality-api.herokuapp.com/air-quality/all-data/${props.match.params.country}`
     )
       .then((d) => {
         if (d.data.error) {
           if (d.data.error === "Request failed with status code 404") {
-            setError(`No Data Available for ${props.match.params.city}`);
+            setError(`No Data Available for ${props.match.params.country}`);
           } else setError(d.data.error);
         } else {
           const summaryData: any = getSummary(d.data);
@@ -228,23 +244,8 @@ const CityPage = (props: any) => {
     <>
       <Title>
         <Container>
-          <BreadCrumb>
-            <Link to={`/${props.match.params.country}`}>
-              {props.match.params.country.replace(/_/g, " ")}
-            </Link>{" "}
-            |{" "}
-            <Link
-              to={`/${props.match.params.country}/${props.match.params.region}`}
-            >
-              {props.match.params.region.replace(/_/g, " ")}
-            </Link>{" "}
-            | {props.match.params.city.replace(/_/g, " ")}
-          </BreadCrumb>
-          <CityName>{props.match.params.city.replace(/_/g, " ")}</CityName>
-          <CountryName>
-            {" "}
-            | {props.match.params.country.replace(/_/g, " ")}
-          </CountryName>
+          <BreadCrumb>{props.match.params.country.replace(/_/g, " ")}</BreadCrumb>
+          <CityName>{props.match.params.country.replace(/_/g, " ")}</CityName>
         </Container>
       </Title>
       {error ? (
@@ -263,7 +264,7 @@ const CityPage = (props: any) => {
                           : lastHourData["PM2.5"]
                       }
                       particleWidth={particleWidth}
-                      city={props.match.params.city.replace(/_/g, " ")}
+                      city={props.match.params.country.replace(/_/g, " ")}
                       text={"Last hour's"}
                     />
                   ) : (
@@ -313,7 +314,7 @@ const CityPage = (props: any) => {
                           : lastDayData["PM2.5"].avgValue.toFixed(1)
                       }
                       particleWidth={particleWidth}
-                      city={props.match.params.city.replace(/_/g, " ")}
+                      city={props.match.params.country.replace(/_/g, " ")}
                       text={"Yesterday's"}
                     />
                   ) : (
@@ -364,7 +365,7 @@ const CityPage = (props: any) => {
                           : lastMonthData["PM2.5"].avgValue.toFixed(1)
                       }
                       particleWidth={particleWidth}
-                      city={props.match.params.city.replace(/_/g, " ")}
+                      city={props.match.params.country.replace(/_/g, " ")}
                       text={"Last Month's"}
                     />
                   ) : (
@@ -455,16 +456,36 @@ const CityPage = (props: any) => {
               )}
             </TimeSeriesCard>
           </Container>
+          <CityListEl>
+            <Container>
+              <h1>
+                All Cities in {props.match.params.country.replace(/_/g, " ")}
+              </h1>
+              <CityListContainer>
+                {_.orderBy(
+                  _.filter(cityList, {
+                    countryID: props.match.params.country
+                  }),
+                  "cityID",
+                  "asc"
+                ).map((city) => (
+                  <Link to={city.regionID === "None" ? `/${city.countryID}/${city.cityID}` : `/${city.countryID}/${city.regionID}/${city.cityID}`}>
+                    <CityEl>{city.cityName}</CityEl>
+                  </Link>
+                ))}
+              </CityListContainer>
+            </Container>
+          </CityListEl>
           <ShareDiv>
             <H1>Share this page</H1>
             {lastDayData ? (
               <IconContainer>
                 <IconEl>
                   <FacebookShareButton
-                    url={`https://airq.mustafasaifee.com/${props.match.params.country}/${props.match.params.region}/${props.match.params.city}`}
+                    url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
                     quote={`${
                       lastDayData["PM2.5"].noOfObservations > 12
-                        ? `PM2.5 concentration in ${props.match.params.city.replace(
+                        ? `PM2.5 concentration in ${props.match.params.country.replace(
                             /_/g,
                             " "
                           )} yesterday was ${lastDayData[
@@ -474,7 +495,7 @@ const CityPage = (props: any) => {
                           )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
                             lastDayData["PM2.5"].avgValue / 22
                           ).toFixed(1)} cigarettes.`
-                        : `Get realtime air quality for ${props.match.params.city.replace(
+                        : `Get realtime air quality for ${props.match.params.country.replace(
                             /_/g,
                             " "
                           )}`
@@ -485,10 +506,10 @@ const CityPage = (props: any) => {
                 </IconEl>
                 <IconEl>
                   <TwitterShareButton
-                    url={`https://airq.mustafasaifee.com/${props.match.params.country}/${props.match.params.region}/${props.match.params.city}`}
+                    url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
                     title={`${
                       lastDayData["PM2.5"].noOfObservations > 12
-                        ? `PM2.5 concentration in ${props.match.params.city.replace(
+                        ? `PM2.5 concentration in ${props.match.params.country.replace(
                             /_/g,
                             " "
                           )} yesterday was ${lastDayData[
@@ -499,13 +520,11 @@ const CityPage = (props: any) => {
                             lastDayData["PM2.5"].avgValue / 22
                           ).toFixed(1)} cigarettes. `
                         : ""
-                    }Get realtime air quality for ${props.match.params.city.replace(
+                    }Get realtime air quality for ${props.match.params.country.replace(
                       /_/g,
                       " "
                     )}: https://airq.mustafasaifee.com/${
                       props.match.params.country
-                    }/${props.match.params.region}/${
-                      props.match.params.city
                     } via @mustafasaifee42, Data by @BerkeleyEarth`}
                   >
                     <TwitterIcon size={40} round={true} />
@@ -516,8 +535,8 @@ const CityPage = (props: any) => {
               <IconContainer>
                 <IconEl>
                   <FacebookShareButton
-                    url={`https://airq.mustafasaifee.com/${props.match.params.country}/${props.match.params.region}/${props.match.params.city}`}
-                    quote={`Get realtime air quality for ${props.match.params.city.replace(
+                    url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
+                    quote={`Get realtime air quality for ${props.match.params.country.replace(
                       /_/g,
                       " "
                     )}`}
@@ -527,14 +546,12 @@ const CityPage = (props: any) => {
                 </IconEl>
                 <IconEl>
                   <TwitterShareButton
-                    url={`https://airq.mustafasaifee.com/${props.match.params.country}/${props.match.params.region}/${props.match.params.city}`}
-                    title={`Get realtime air quality for ${props.match.params.city.replace(
+                    url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
+                    title={`Get realtime air quality for ${props.match.params.country.replace(
                       /_/g,
                       " "
                     )}: https://airq.mustafasaifee.com/${
                       props.match.params.country
-                    }/${props.match.params.region}/${
-                      props.match.params.city
                     } via @mustafasaifee42, Data by @BerkeleyEarth`}
                   >
                     <TwitterIcon size={40} round={true} />

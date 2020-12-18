@@ -134,7 +134,7 @@ const MostPollutedList = () => {
                 "cityName",
                 "asc"
               ).map((city) => (
-                <Link to={`/${city.countryID}/${city.regionID}/${city.cityID}`}>
+                <Link to={city.regionID === "None" ? `/${city.countryID}/${city.cityID}` : `/${city.countryID}/${city.regionID}/${city.cityID}`}>
                   <CityEl>{city.cityName}</CityEl>
                 </Link>
               ))}
