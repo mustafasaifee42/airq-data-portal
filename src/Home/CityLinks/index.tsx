@@ -82,6 +82,10 @@ const CountryHeading = styled.div`
   font-size: 30px;
   padding: 20px;
   height: 42px;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const CityEl = styled.div`
@@ -124,7 +128,9 @@ const MostPollutedList = () => {
             ))}
           </CountryList>
           <CityListEl>
-            <CountryHeading>{selectedCountry}</CountryHeading>
+            <Link to={`/${selectedCountry.replace(/ /g, "_")}`}>
+              <CountryHeading>{selectedCountry}</CountryHeading>
+            </Link>
             <CityList>
               {_.sortBy(
                 _.filter(
@@ -134,7 +140,13 @@ const MostPollutedList = () => {
                 "cityName",
                 "asc"
               ).map((city) => (
-                <Link to={city.regionID === "None" ? `/${city.countryID}/${city.cityID}` : `/${city.countryID}/${city.regionID}/${city.cityID}`}>
+                <Link
+                  to={
+                    city.regionID === "None"
+                      ? `/${city.countryID}/${city.cityID}`
+                      : `/${city.countryID}/${city.regionID}/${city.cityID}`
+                  }
+                >
                   <CityEl>{city.cityName}</CityEl>
                 </Link>
               ))}

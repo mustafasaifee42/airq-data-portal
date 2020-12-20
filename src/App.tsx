@@ -14,12 +14,12 @@ import {
 } from "react-share";
 import Select from "react-select";
 import cityList from "./data/cityList.json";
-import ReactGA from 'react-ga';
+import _ from "lodash";
+import ReactGA from "react-ga";
 
-
-ReactGA.initialize('UA-185648012-1');
+ReactGA.initialize("UA-185648012-1");
 ReactGA.set({ anonymizeIp: true });
-ReactGA.pageview('/');
+ReactGA.pageview("/");
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -195,23 +195,41 @@ const IconEl = styled.div`
 const SelectEl = styled.div`
   width: 300px;
 
-
-  .select__control{
-    background-color:var(--very-light-gray) !important;
-    border-radius:0 !important;
+  .select__control {
+    background-color: var(--very-light-gray) !important;
+    border-radius: 0 !important;
     border: 0 !important;
+  }
+
+  .select__menu {
+    text-align: left !important;
   }
 `;
 
 const App = () => {
-  const cityOption = cityList.map((d: any) => {
-    return {
+  const cityOption: any = [];
+  const countryList = _.sortBy(
+    _.uniqBy(cityList, "countryName"),
+    "countryName",
+    "asc"
+  );
+  countryList.forEach((d) => {
+    cityOption.push({
+      label: d.countryName,
+      city: undefined,
+      region: undefined,
+      country: d.countryName,
+    });
+  });
+  cityList.forEach((d: any) => {
+    cityOption.push({
       label: `${d.cityName}, ${d.regionName}, ${d.countryName}`,
       city: d.cityName,
       region: d.regionName,
       country: d.countryName,
-    };
+    });
   });
+  const cityOptionSorted = _.sortBy(cityOption, "country", "asc");
   return (
     <Router>
       <div>
@@ -229,7 +247,7 @@ const App = () => {
                 <Select
                   styles={{
                     // Fixes the overlapping problem of the component
-                    menu: provided => ({ ...provided, zIndex: 9999 })
+                    menu: (provided) => ({ ...provided, zIndex: 9999 }),
                   }}
                   className="basic-single"
                   classNamePrefix="select"
@@ -237,18 +255,31 @@ const App = () => {
                   isClearable={true}
                   isSearchable={true}
                   name="citySelection"
-                  options={cityOption}
-                  placeholder={"Search a city"}
+                  options={cityOptionSorted}
+                  placeholder={"Search a city or country"}
                   value={null}
                   onChange={(e: any) => {
                     if (e) {
-                      window.location.href = `/${e.country.replace(
-                        / /g,
-                        "_"
-                      )}/${e.region.replace(/ /g, "_")}/${e.city.replace(
-                        / /g,
-                        "_"
-                      )}`;
+                      if (e.city === undefined && e.region === undefined) {
+                        window.location.href = `/${e.country.replace(
+                          / /g,
+                          "_"
+                        )}`;
+                      } else {
+                        if (e.region === "None") {
+                          window.location.href = `/${e.country.replace(
+                            / /g,
+                            "_"
+                          )}/${e.city.replace(/ /g, "_")}`;
+                        } else
+                          window.location.href = `/${e.country.replace(
+                            / /g,
+                            "_"
+                          )}/${e.region.replace(/ /g, "_")}/${e.city.replace(
+                            / /g,
+                            "_"
+                          )}`;
+                      }
                     }
                   }}
                 />

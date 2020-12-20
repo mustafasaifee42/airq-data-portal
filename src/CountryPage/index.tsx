@@ -17,9 +17,26 @@ import * as d3 from "d3";
 import DataCard from "../generic/DataCard";
 import { Link } from "react-router-dom";
 import cityList from "../data/cityList.json";
+import CityListForCountry from "./CityListForCountry";
 import _ from "lodash";
 
 import { Sequential, Quantized } from "../Scales";
+
+interface CityData {
+  city: string;
+  country: string;
+  region: string;
+  "PM2.5": {
+    "Last Hour": number | null;
+    "Last Day": number | null;
+    "Last 2 Days": number | null;
+    "Last 3 Days": number | null;
+    "Last 5 Days": number | null;
+    "Last Week": number | null;
+    "Last 30 Days": number | null;
+    "Last Year": number | null;
+  };
+}
 
 const Title = styled.div`
   padding: 60px 20px 100px 20px;
@@ -40,10 +57,18 @@ const CityName = styled.span`
 const DataCardContainer = styled.div`
   display: flex;
   padding: 20px 0;
-  margin: -60px 0 20px 0;
+  margin: 20px 0;
   background-color: var(--white);
   box-shadow: 0 0px 20px rgba(0, 0, 0, 0.1);
   width: 100%;
+`;
+
+const CityListCard = styled.div`
+  padding: 20px;
+  margin: -60px 0 20px 0;
+  background-color: var(--white);
+  box-shadow: 0 0px 20px rgba(0, 0, 0, 0.1);
+  width: calc(100%-40px);
 `;
 
 const TimeSeriesCard = styled.div`
@@ -92,7 +117,7 @@ const Span = styled.div`
 const ErrorDiv = styled.div`
   margin: 20px auto;
   padding: 20px;
-  width: 100%;
+  width: calc(100% - 40px);
   text-align: center;
   color: var(--black);
   background-color: rgba(234, 65, 54, 0.3);
@@ -132,7 +157,7 @@ const BreadCrumb = styled.div`
   font-size: 14px;
   color: var(--gray);
   margin-bottom: 30px;
-`
+`;
 
 const CityListEl = styled.div`
   margin-top: 60px;
@@ -154,8 +179,7 @@ const CityEl = styled.div`
   font-style: normal;
 `;
 
-
-const ShowMoreLess  =styled.button`
+const ShowMoreLess = styled.button`
   margin: 20px 10px;
   padding: 10px;
   background-color: var(--primary-color);
@@ -176,6 +200,10 @@ const CityPage = (props: any) => {
   const [error, setError] = useState<string | undefined>(undefined);
   const [particleWidth, setParticleWidth] = useState<number>(100);
   const [showMore, setShowMore] = useState<boolean>(true);
+  const [countryCityList, setCountryCityList] = useState<any>(undefined);
+  const [countryCityListError, setCountryCityListError] = useState<any>(
+    undefined
+  );
 
   const GraphRef = useRef(null);
   useEffect(() => {
@@ -192,7 +220,7 @@ const CityPage = (props: any) => {
       .then((d) => {
         if (d.data.error) {
           if (d.data.error === "Request failed with status code 404") {
-            setError(`No Data Available for ${props.match.params.country}`);
+            setError(`Data Not Available for ${props.match.params.country}`);
           } else setError(d.data.error);
         } else {
           const summaryData: any = getSummary(d.data);
@@ -250,22 +278,63 @@ const CityPage = (props: any) => {
       .catch((e: { message: string }) => {
         setError(e.message);
       });
+    Axios.get(
+      `https://berkleyearth-air-quality-api.herokuapp.com/air-quality/all-cities`
+    )
+      .then((d) => {
+        const data = _.filter(
+          d.data,
+          (v: CityData) =>
+            v.country === props.match.params.country.replace(/_/g, " ")
+        ).sort((a, b) =>
+          a["PM2.5"]["Last Hour"] > b["PM2.5"]["Last Hour"]
+            ? -1
+            : a["PM2.5"]["Last Hour"] < b["PM2.5"]["Last Hour"]
+            ? 1
+            : 0
+        );
+        setCountryCityList(data);
+      })
+      .catch((e: { message: string }) => {
+        setCountryCityListError(e.message);
+      });
     // eslint-disable-next-line
   }, []);
   return (
     <>
       <Title>
         <Container>
-          <BreadCrumb>{props.match.params.country.replace(/_/g, " ")}</BreadCrumb>
+          <BreadCrumb>
+            {props.match.params.country.replace(/_/g, " ")}
+          </BreadCrumb>
           <CityName>{props.match.params.country.replace(/_/g, " ")}</CityName>
         </Container>
       </Title>
-      {error ? (
-        <ErrorDiv>{error}</ErrorDiv>
-      ) : (
-        <>
-          <Container>
-            <DataCardContainer>
+      <Container>
+        <CityListCard>
+          <h2>
+            Live PM 2.5 Concentration for All Cities of{" "}
+            {props.match.params.country.replace(/_/g, " ")}{" "}
+            <SubNote>
+              (only showing the cities for which live data is available, full
+              list of cities at the bottom of the page)
+            </SubNote>
+          </h2>
+          {countryCityListError ? (
+            <ErrorDiv>{error}</ErrorDiv>
+          ) : countryCityList ? (
+            <CityListForCountry data={countryCityList} />
+          ) : (
+            <div>
+              <Loader type="Oval" color="#00BFFF" height={50} width={50} />
+            </div>
+          )}
+        </CityListCard>
+        <DataCardContainer>
+          {error ? (
+            <ErrorDiv style={{ margin: "0 20px" }}>{error}</ErrorDiv>
+          ) : (
+            <>
               <DataCardEl ref={GraphRef}>
                 <>
                   {lastHourData ? (
@@ -420,173 +489,188 @@ const CityPage = (props: any) => {
                   ) : null}
                 </DataNote>
               </DataCardEl>
-            </DataCardContainer>
-            <TimeSeriesCard>
-              <h2>Air Quality Stripe (Last 365 days)</h2>
-              <KeyEl>
-                <Quantized />
-              </KeyEl>
-              {dailyTSYearly ? (
-                <AirQualityStrip data={dailyTSYearly} />
-              ) : (
-                <div>
-                  <Loader type="Oval" color="#00BFFF" height={50} width={50} />
-                </div>
-              )}
-            </TimeSeriesCard>
-            <TimeSeriesCard>
-              <h2>Air Quality by Time of Day</h2>
-              <KeyEl>
-                <Sequential />
-              </KeyEl>
-              {monthTS ? (
-                <AirQualityByTime data={monthTS} />
-              ) : (
-                <div>
-                  <Loader type="Oval" color="#00BFFF" height={50} width={50} />
-                </div>
-              )}
-            </TimeSeriesCard>
-            <TimeSeriesCard>
-              <h2>Daily Average Time Series (Last 2 years)</h2>
-              {dailyTS ? (
-                <DailyTimeSeries data={dailyTS} />
-              ) : (
-                <div>
-                  <Loader type="Oval" color="#00BFFF" height={50} width={50} />
-                </div>
-              )}
-            </TimeSeriesCard>
-            <TimeSeriesCard>
-              <h2>Hourly Average Time Series (Last 365 days)</h2>
-              {hourlyTS ? (
-                <TimeSeries data={hourlyTS} />
-              ) : (
-                <div>
-                  <Loader type="Oval" color="#00BFFF" height={50} width={50} />
-                </div>
-              )}
-            </TimeSeriesCard>
-          </Container>
-          <CityListEl>
-            <Container>
-              <h1>
-                All Cities in {props.match.params.country.replace(/_/g, " ")}
-              </h1>
-              <CityListContainer>
-                {_.orderBy(
-                  _.filter(cityList, {
-                    countryID: props.match.params.country
-                  }),
-                  "cityID",
-                  "asc"
-                ).map((city: any, i) =>
-                showMore ? (
-                  i < 20 ? (
-                    <Link
-                      to={`/${city.countryID}/${city.regionID}/${city.cityID}`}
-                    >
-                      <CityEl>{city.cityName}{city.regionName === "None" ? null : `, ${city.regionName}`}</CityEl>
-                    </Link>
-                  ) : null
-                ) : (
+            </>
+          )}
+        </DataCardContainer>
+
+        <TimeSeriesCard>
+          <h2>Air Quality Stripe (Last 365 days)</h2>
+          <KeyEl>
+            <Quantized />
+          </KeyEl>
+          {error ? (
+            <ErrorDiv>{error}</ErrorDiv>
+          ) : dailyTSYearly ? (
+            <AirQualityStrip data={dailyTSYearly} />
+          ) : (
+            <div>
+              <Loader type="Oval" color="#00BFFF" height={50} width={50} />
+            </div>
+          )}
+        </TimeSeriesCard>
+        <TimeSeriesCard>
+          <h2>Air Quality by Time of Day</h2>
+          <KeyEl>
+            <Sequential />
+          </KeyEl>
+          {error ? (
+            <ErrorDiv>{error}</ErrorDiv>
+          ) : monthTS ? (
+            <AirQualityByTime data={monthTS} />
+          ) : (
+            <div>
+              <Loader type="Oval" color="#00BFFF" height={50} width={50} />
+            </div>
+          )}
+        </TimeSeriesCard>
+        <TimeSeriesCard>
+          <h2>Daily Average Time Series (Last 2 years)</h2>
+          {error ? (
+            <ErrorDiv>{error}</ErrorDiv>
+          ) : dailyTS ? (
+            <DailyTimeSeries data={dailyTS} />
+          ) : (
+            <div>
+              <Loader type="Oval" color="#00BFFF" height={50} width={50} />
+            </div>
+          )}
+        </TimeSeriesCard>
+        <TimeSeriesCard>
+          <h2>Hourly Average Time Series (Last 365 days)</h2>
+          {error ? (
+            <ErrorDiv>{error}</ErrorDiv>
+          ) : hourlyTS ? (
+            <TimeSeries data={hourlyTS} />
+          ) : (
+            <div>
+              <Loader type="Oval" color="#00BFFF" height={50} width={50} />
+            </div>
+          )}
+        </TimeSeriesCard>
+      </Container>
+      <CityListEl>
+        <Container>
+          <h1>All Cities in {props.match.params.country.replace(/_/g, " ")}</h1>
+          <CityListContainer>
+            {_.orderBy(
+              _.filter(cityList, {
+                countryID: props.match.params.country,
+              }),
+              "cityID",
+              "asc"
+            ).map((city: any, i) =>
+              showMore ? (
+                i < 20 ? (
                   <Link
                     to={`/${city.countryID}/${city.regionID}/${city.cityID}`}
                   >
-                    <CityEl>{city.cityName}{city.regionName === "None" ? null : `, ${city.regionName}`}</CityEl>
+                    <CityEl>
+                      {city.cityName}
+                      {city.regionName === "None"
+                        ? null
+                        : `, ${city.regionName}`}
+                    </CityEl>
                   </Link>
-                )
-              )}
-              </CityListContainer>
-              <ShowMoreLess onClick={() => {setShowMore(!showMore)}}>{ showMore ? 'Show More' : 'Show Less'}</ShowMoreLess>
-            </Container>
-          </CityListEl>
-          <ShareDiv>
-            <H1>Share this page</H1>
-            {lastDayData ? (
-              <IconContainer>
-                <IconEl>
-                  <FacebookShareButton
-                    url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
-                    quote={`${
-                      lastDayData["PM2.5"].noOfObservations > 12
-                        ? `PM2.5 concentration in ${props.match.params.country.replace(
-                            /_/g,
-                            " "
-                          )} yesterday was ${lastDayData[
-                            "PM2.5"
-                          ].avgValue.toFixed(
-                            2
-                          )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
-                            lastDayData["PM2.5"].avgValue / 22
-                          ).toFixed(1)} cigarettes.`
-                        : `Get realtime air quality for ${props.match.params.country.replace(
-                            /_/g,
-                            " "
-                          )}`
-                    }`}
-                  >
-                    <FacebookIcon size={40} round={true} />
-                  </FacebookShareButton>
-                </IconEl>
-                <IconEl>
-                  <TwitterShareButton
-                    url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
-                    title={`${
-                      lastDayData["PM2.5"].noOfObservations > 12
-                        ? `PM2.5 concentration in ${props.match.params.country.replace(
-                            /_/g,
-                            " "
-                          )} yesterday was ${lastDayData[
-                            "PM2.5"
-                          ].avgValue.toFixed(
-                            2
-                          )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
-                            lastDayData["PM2.5"].avgValue / 22
-                          ).toFixed(1)} cigarettes. `
-                        : ""
-                    }Get realtime air quality for ${props.match.params.country.replace(
-                      /_/g,
-                      " "
-                    )}: https://airq.mustafasaifee.com/${
-                      props.match.params.country
-                    } via @mustafasaifee42, Data by @BerkeleyEarth`}
-                  >
-                    <TwitterIcon size={40} round={true} />
-                  </TwitterShareButton>
-                </IconEl>
-              </IconContainer>
-            ) : (
-              <IconContainer>
-                <IconEl>
-                  <FacebookShareButton
-                    url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
-                    quote={`Get realtime air quality for ${props.match.params.country.replace(
-                      /_/g,
-                      " "
-                    )}`}
-                  >
-                    <FacebookIcon size={40} round={true} />
-                  </FacebookShareButton>
-                </IconEl>
-                <IconEl>
-                  <TwitterShareButton
-                    url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
-                    title={`Get realtime air quality for ${props.match.params.country.replace(
-                      /_/g,
-                      " "
-                    )}: https://airq.mustafasaifee.com/${
-                      props.match.params.country
-                    } via @mustafasaifee42, Data by @BerkeleyEarth`}
-                  >
-                    <TwitterIcon size={40} round={true} />
-                  </TwitterShareButton>
-                </IconEl>
-              </IconContainer>
+                ) : null
+              ) : (
+                <Link to={`/${city.countryID}/${city.regionID}/${city.cityID}`}>
+                  <CityEl>
+                    {city.cityName}
+                    {city.regionName === "None" ? null : `, ${city.regionName}`}
+                  </CityEl>
+                </Link>
+              )
             )}
-          </ShareDiv>
-        </>
-      )}
+          </CityListContainer>
+          <ShowMoreLess
+            onClick={() => {
+              setShowMore(!showMore);
+            }}
+          >
+            {showMore ? "Show More" : "Show Less"}
+          </ShowMoreLess>
+        </Container>
+      </CityListEl>
+      <ShareDiv>
+        <H1>Share this page</H1>
+        {lastDayData ? (
+          <IconContainer>
+            <IconEl>
+              <FacebookShareButton
+                url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
+                quote={`${
+                  lastDayData["PM2.5"].noOfObservations > 12
+                    ? `PM2.5 concentration in ${props.match.params.country.replace(
+                        /_/g,
+                        " "
+                      )} yesterday was ${lastDayData["PM2.5"].avgValue.toFixed(
+                        2
+                      )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
+                        lastDayData["PM2.5"].avgValue / 22
+                      ).toFixed(1)} cigarettes.`
+                    : `Get realtime air quality for ${props.match.params.country.replace(
+                        /_/g,
+                        " "
+                      )}`
+                }`}
+              >
+                <FacebookIcon size={40} round={true} />
+              </FacebookShareButton>
+            </IconEl>
+            <IconEl>
+              <TwitterShareButton
+                url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
+                title={`${
+                  lastDayData["PM2.5"].noOfObservations > 12
+                    ? `PM2.5 concentration in ${props.match.params.country.replace(
+                        /_/g,
+                        " "
+                      )} yesterday was ${lastDayData["PM2.5"].avgValue.toFixed(
+                        2
+                      )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
+                        lastDayData["PM2.5"].avgValue / 22
+                      ).toFixed(1)} cigarettes. `
+                    : ""
+                }Get realtime air quality for ${props.match.params.country.replace(
+                  /_/g,
+                  " "
+                )}: https://airq.mustafasaifee.com/${
+                  props.match.params.country
+                } via @mustafasaifee42, Data by @BerkeleyEarth`}
+              >
+                <TwitterIcon size={40} round={true} />
+              </TwitterShareButton>
+            </IconEl>
+          </IconContainer>
+        ) : (
+          <IconContainer>
+            <IconEl>
+              <FacebookShareButton
+                url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
+                quote={`Get realtime air quality for ${props.match.params.country.replace(
+                  /_/g,
+                  " "
+                )}`}
+              >
+                <FacebookIcon size={40} round={true} />
+              </FacebookShareButton>
+            </IconEl>
+            <IconEl>
+              <TwitterShareButton
+                url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
+                title={`Get realtime air quality for ${props.match.params.country.replace(
+                  /_/g,
+                  " "
+                )}: https://airq.mustafasaifee.com/${
+                  props.match.params.country
+                } via @mustafasaifee42, Data by @BerkeleyEarth`}
+              >
+                <TwitterIcon size={40} round={true} />
+              </TwitterShareButton>
+            </IconEl>
+          </IconContainer>
+        )}
+      </ShareDiv>
     </>
   );
 };
