@@ -48,6 +48,9 @@ const DataCardContainer = styled.div`
   background-color: var(--white);
   box-shadow: 0 0px 20px rgba(0, 0, 0, 0.1);
   width: 100%;
+  @media screen and (max-width: 960px) {
+    flex-wrap: wrap;
+  }
 `;
 
 const TimeSeriesCard = styled.div`
@@ -64,6 +67,14 @@ const DataCardEl = styled.div`
   border-right: 1px solid var(--light-gray);
   &:last-of-type {
     border: 0;
+  }
+  @media screen and (max-width: 960px) {
+    width: 100%;
+    border-bottom: 1px solid var(--light-gray);
+    margin: 20px 0;
+    &:last-of-type {
+      border: 0;
+    }
   }
 `;
 

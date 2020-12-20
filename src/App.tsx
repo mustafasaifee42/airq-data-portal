@@ -337,6 +337,9 @@ const App = () => {
                 </a>
                 . <br />
                 <Link to="/more-info">Learn More</Link>
+              <br />
+              <br />
+              Best viewed on screen with resolution higher than 960px.
               </div>
             </FooterContainer>
             <FooterContainer>
