@@ -124,7 +124,9 @@ const CityListForCountry = (props: any) => {
                       <CityIndex>{i + 1}</CityIndex>
                       <CityName>
                         {d.city}
-                        <RegionName>, {d.region}</RegionName>
+                        {window.innerWidth > 680 ? (
+                          <RegionName>, {d.region}</RegionName>
+                        ) : null}
                       </CityName>
                       <HealthLevelTag
                         backgroundColor={

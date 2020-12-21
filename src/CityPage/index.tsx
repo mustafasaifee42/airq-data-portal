@@ -70,7 +70,7 @@ const DataCardEl = styled.div`
   @media screen and (max-width: 960px) {
     width: 100%;
     border-bottom: 1px solid var(--light-gray);
-    margin: 20px 0;
+    padding: 20px 0;
     &:last-of-type {
       border: 0;
     }

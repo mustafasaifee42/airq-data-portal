@@ -17,7 +17,7 @@ const TimeSeries = (props: PassedProps) => {
       graphDiv.selectAll(".tooltip").remove();
       const height = 100;
 
-      const margin = { top: 0, right: 10, bottom: 15, left: 0 };
+      const margin = { top: 0, right: 0, bottom: 15, left: 0 };
 
       const width =
         parseInt(graphDiv.style("width").slice(0, -2), 10) -

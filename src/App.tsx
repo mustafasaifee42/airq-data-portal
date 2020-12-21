@@ -101,6 +101,12 @@ const GlobalStyle = createGlobalStyle`
     background: rgba(255,255,255,0.5);
     pointer-events: none;
   }
+
+  .navLink{
+    @media screen and (max-width: 600px) {
+      display: none;
+    }
+  }
 `;
 
 const Header = styled.header`
@@ -132,6 +138,9 @@ const Logo = styled.div`
   a:hover {
     font-weight: inherit;
   }
+  @media screen and (max-width: 600px) {
+    font-size: 24px;
+  }
 `;
 
 const RedSpan = styled.span`
@@ -142,6 +151,10 @@ const RedSpan = styled.span`
 
 const BlackSpan = styled.span`
   color: var(--black);
+
+  @media screen and (max-width: 480px) {
+    display: none;
+  }
 `;
 
 const Navigation = styled.div`
@@ -158,12 +171,13 @@ const NavEl = styled.div`
   }
 `;
 
-const Container = styled.div`
+const FooterEl = styled.div`
   max-width: 1272px;
   padding: 0 20px;
   margin: auto;
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 
   a {
     color: var(--white);
@@ -174,6 +188,14 @@ const Container = styled.div`
 const FooterContainer = styled.div`
   width: 40%;
   min-width: 320px;
+  margin: 0 10px;
+  @media screen and (max-width: 720px) {
+    margin-bottom: 40px;
+    width: auto;
+    &:last-of-type: {
+      margin-bottom: 0;
+    }
+  }
 `;
 
 const FooterSubNote = styled.div`
@@ -199,6 +221,10 @@ const SelectEl = styled.div`
     background-color: var(--very-light-gray) !important;
     border-radius: 0 !important;
     border: 0 !important;
+  }
+
+  @media screen and (max-width: 600px) {
+    width: 230px;
   }
 
   .select__menu {
@@ -285,10 +311,10 @@ const App = () => {
                 />
               </SelectEl>
             </NavEl>
-            <NavEl>
+            <NavEl className="navLink">
               <Link to="/">Map</Link>
             </NavEl>
-            <NavEl>
+            <NavEl className="navLink">
               <Link to="/more-info">More Info</Link>
             </NavEl>
           </Navigation>
@@ -320,7 +346,7 @@ const App = () => {
           </Route>
         </Switch>
         <Footer className="appFooter">
-          <Container>
+          <FooterEl>
             <FooterContainer>
               <h2>About the Project</h2>
               <div>
@@ -373,7 +399,7 @@ const App = () => {
                 </IconEl>
               </IconContainer>
             </FooterContainer>
-          </Container>
+          </FooterEl>
           <FooterSubNote>
             Made in Helsinki by{" "}
             <a

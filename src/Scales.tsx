@@ -1,12 +1,16 @@
 import React from "react";
 
-export const Sequential: React.FC = () => (
+interface Size {
+  width?: number;
+}
+
+export const Sequential: React.FC<Size> = props => (
   <svg
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
     x="0px"
     y="0px"
-    width="361"
+    width={props.width ? props.width : '361'}
     height="28"
     viewBox="0 0 361 28"
   >
@@ -162,13 +166,13 @@ export const Sequential: React.FC = () => (
   </svg>
 );
 
-export const Quantized: React.FC = () => (
+export const Quantized: React.FC<Size> = props => (
   <svg
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
     x="0px"
     y="0px"
-    width="361"
+    width={props.width ? props.width : '361'}
     height="56"
     viewBox="0 0 361 56"
   >

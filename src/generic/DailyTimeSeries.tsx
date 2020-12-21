@@ -65,7 +65,7 @@ const TimeSeries = (props: PassedProps) => {
 
       const height = 320;
 
-      const margin = { top: 20, right: 20, bottom: 10, left: 20 };
+      const margin = { top: 20, right: 0, bottom: 10, left: 0 };
 
       const width =
         parseInt(graphDiv.style("width").slice(0, -2), 10) -

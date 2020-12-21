@@ -6,9 +6,8 @@ import { getHealthStatus } from "../../utils/getHealthStatus";
 import { HealthTag } from "../../generic/HealthTag";
 import { Sequential, Quantized } from "../../Scales";
 
-
 interface PassedProps {
-  data:any;
+  data: any;
 }
 
 interface MapMode {
@@ -37,6 +36,10 @@ const DateTime = styled.div`
     transform: translate(-50%, 0);
     z-index: 10000;
     font-size: 14px;
+    @media screen and (max-width: 600px) {
+      left: 10px;
+      transform: translate(0, 0);
+    }
 `;
 
 interface ColorScaleType {
@@ -52,6 +55,9 @@ const InfoBox = styled.div`
     z-index: 10000;
     font-size: 14px;
     max-width: 280px;
+    @media screen and (max-width: 600px) {
+      display: none;
+    }
 `;
 
 const SubNote = styled.div`
@@ -67,14 +73,12 @@ const ColorScale = styled.div<ColorScaleType>`
     border-radius: 2px;
     position absolute;
     height: ${(props) => (props.colorScale === "Sequential" ? "68px" : "99px")};
-    width: 381px;
     z-index: 10000;
     font-size: 14px;
 `;
 
-
-const MapComponent = (props:PassedProps) => {
-  const {data} = props;
+const MapComponent = (props: PassedProps) => {
+  const { data } = props;
   const [mode, setMode] = useState("Light Mode");
   const [colorScale, setColorScale] = useState("Sequential");
   const [city, setCity] = useState(null);
@@ -165,7 +169,11 @@ const MapComponent = (props:PassedProps) => {
         <h4>
           PM2.5 Concetration (μg/m<sup>3</sup>)
         </h4>
-        {colorScale === "Sequential" ? <Sequential /> : <Quantized />}
+        {colorScale === "Sequential" ? (
+          <Sequential width={window.innerWidth < 640 ? (0.5 * window.innerWidth) : undefined} />
+        ) : (
+          <Quantized width={window.innerWidth < 640 ? (0.5 * window.innerWidth) : undefined} />
+        )}
       </ColorScale>
       <MapView
         setMode={setMode}
