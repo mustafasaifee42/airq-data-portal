@@ -26,8 +26,9 @@ const Title = styled.div`
 `;
 
 const Container = styled.div`
-  max-width: 1200px;
+  max-width: 1240px;
   margin: auto;
+  padding:0 20px;
 `;
 
 const CityName = styled.span`
@@ -70,8 +71,10 @@ const DataCardEl = styled.div`
   }
   @media screen and (max-width: 960px) {
     width: 100%;
+    border: 0;
     border-bottom: 1px solid var(--light-gray);
     padding: 20px 0;
+    margin: 0 20px;
     &:last-of-type {
       border: 0;
     }
