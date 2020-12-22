@@ -185,6 +185,21 @@ const FooterEl = styled.div`
   }
 `;
 
+const PPContainer = styled.div`
+  max-width: 1272px;
+  padding: 0 20px;
+  margin: 40px auto 0 auto;
+  font-size: 14px;
+  font-style: italic;
+  opacity: 0.8;
+  @media screen and (max-width: 720px) {
+    margin: 0 auto;
+  }
+`;
+const PPEl = styled.div`
+  margin: 0 10px;
+`;
+
 const FooterContainer = styled.div`
   width: 40%;
   min-width: 320px;
@@ -363,9 +378,9 @@ const App = () => {
                 </a>
                 . <br />
                 <Link to="/more-info">Learn More</Link>
-              <br />
-              <br />
-              Best viewed on screen with resolution higher than 960px.
+                <br />
+                <br />
+                Best viewed on screen with resolution higher than 960px.
               </div>
             </FooterContainer>
             <FooterContainer>
@@ -400,6 +415,19 @@ const App = () => {
               </IconContainer>
             </FooterContainer>
           </FooterEl>
+          <PPContainer>
+            <PPEl>
+              <h2>Privacy Policy</h2>
+              <div>
+                This website does not save any information about you. We do not
+                directly use cookies or other tracking technologies. We do,
+                however, use Google Analytics for mere statistical reasons. It
+                is possible that Google Analytics sets cookies or uses other
+                tracking technologies, but this data is not directly accessible
+                by us.
+              </div>
+            </PPEl>
+          </PPContainer>
           <FooterSubNote>
             Made in Helsinki by{" "}
             <a
