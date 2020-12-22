@@ -51,13 +51,13 @@ const About = () => {
       <a target="_blank" rel="noreferrer" href="https://www.mustafasaifee.com">
         Mustafa Saifee
       </a>{" "}
-      and the open source python code for fetching the live data in JSON format
+      and the open source python code for fetching the live map data in JSON format
       can be found{" "}
-      <a target="_blank" rel="noreferrer" href="https://www.mustafasaifee.com">
+      <a target="_blank" rel="noreferrer" href="https://github.com/mustafasaifee42/air-quality-grid-map-image-data">
         here
       </a>{" "}
       and the code for the website can be found{" "}
-      <a target="_blank" rel="noreferrer" href="https://www.mustafasaifee.com">
+      <a target="_blank" rel="noreferrer" href="https://github.com/mustafasaifee42/airq-data-portal">
         here
       </a>
       .
@@ -82,6 +82,14 @@ const About = () => {
         target="_blank"
         rel="noreferrer"
         href="http://berkeleyearth.org/archive/air-quality-real-time-maps-data-download/"
+      >
+        here
+      </a>
+      {" "}and the images generated using this map can be found{" "}
+      <a
+        target="_blank"
+        rel="noreferrer"
+        href="https://github.com/mustafasaifee42/air-quality-grid-map-image-data"
       >
         here
       </a>
