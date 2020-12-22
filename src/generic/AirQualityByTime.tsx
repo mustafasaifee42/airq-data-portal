@@ -102,7 +102,7 @@ const TimeSeries = (props: PassedProps) => {
         .attr("y", 0)
         .attr("dy", -5)
         .attr("text-anchor", "middle")
-        .text((d) => `${d < 10 ? `0${d}` : d}:00`);
+        .text((d) => window.innerWidth > 720 ? `${d < 10 ? `0${d}` : d}:00` : d % 2 === 0 ? `${d < 10 ? `0${d}` : d}` : null  );
       graphG
         .selectAll(".bars")
         .data(formatData)

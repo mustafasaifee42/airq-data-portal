@@ -145,7 +145,7 @@ const TimeSeries = (props: PassedProps) => {
         .style("font-family", "IBM Plex Sans")
         .style("color", "var(--black)")
         .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%b '%y") as any))
+        .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%d %b '%y") as any).ticks(window.innerWidth < 720 ? 5 : undefined))
         .call((g) => g.select(".domain").remove());
       mainGraph
         .append("g")
@@ -231,7 +231,7 @@ const TimeSeries = (props: PassedProps) => {
             .selectAll(".line")
             .transition()
             .attr("d", mainGraphLine as any);
-          xAxis.transition().call(d3.axisBottom(xScale));
+          xAxis.transition().call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%d %b '%y") as any).ticks(window.innerWidth < 720 ? 5 : undefined));
         }
       };
       const brush = d3
