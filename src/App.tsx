@@ -330,12 +330,12 @@ const App = () => {
               <Link to="/">Map</Link>
             </NavEl>
             <NavEl className="navLink">
-              <Link to="/more-info">More Info</Link>
+              <Link to="/about">About</Link>
             </NavEl>
           </Navigation>
         </Header>
         <Switch>
-          <Route path="/more-info">
+          <Route path="/about">
             <About />
           </Route>
           <Route
