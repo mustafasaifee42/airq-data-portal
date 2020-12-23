@@ -3,6 +3,7 @@ import Axios from "axios";
 import styled from "styled-components";
 import Loader from "react-loader-spinner";
 import { CityList } from "./CityList";
+import { getMonth } from '../../utils/getMonth';
 
 interface CityData {
   city: string;
@@ -76,6 +77,10 @@ const MostPollutedList = () => {
       })
       .catch((e: { message: string }) => setErr(e.message));
   }, []);
+  const time = lastUpdated?.split('T')[1].substring(0,5);
+  const year  = lastUpdated?.split('T')[0].split('-')[0];
+  const day  = lastUpdated?.split('T')[0].split('-')[2];
+  const month  = lastUpdated ? getMonth(lastUpdated.split('T')[0].split('-')[1]) : null;
 
   return (
     <RootEl>
@@ -86,7 +91,7 @@ const MostPollutedList = () => {
         <SubNote>
           (Last Updated:{" "}
           {lastUpdated
-            ? `${lastUpdated} UTC`
+            ? `${day}-${month}-${year} ${time} GMT`
             : lastUpdatedErr
             ? "Error fetching the last update date"
             : "..."}

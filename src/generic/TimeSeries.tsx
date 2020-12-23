@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { getMonth } from '../utils/getMonth';
 import * as d3 from "d3";
 import _ from "lodash";
 
@@ -283,6 +284,10 @@ const TimeSeries = (props: PassedProps) => {
       const mousemove = (event: any) => {
         const selectedData =
           data[bisect(data, xScale.invert(d3.pointer(event)[0]), 1)];
+        const time  = selectedData.date.toISOString().substring(0, 16).split('T')[1];
+        const year  = selectedData.date.toISOString().substring(0, 16).split('T')[0].split('-')[0];
+        const day  = selectedData.date.toISOString().substring(0, 16).split('T')[0].split('-')[2];
+        const month  = getMonth(selectedData.date.toISOString().substring(0, 16).split('T')[0].split('-')[1]);
         focus
           .attr("x1", xScale(selectedData.date))
           .attr("x2", xScale(selectedData.date));
@@ -297,7 +302,7 @@ const TimeSeries = (props: PassedProps) => {
             },${yScale(selectedData["PM2.5"])})`
           );
         focusText.html(
-          `${selectedData.date.toISOString().substring(0, 16)} UTC: ${
+          `${day}-${month}-${year} ${time} GMT: ${
             selectedData["PM2.5"] ? `${selectedData["PM2.5"]}  μg/m3` : "NA"
           }`
         );

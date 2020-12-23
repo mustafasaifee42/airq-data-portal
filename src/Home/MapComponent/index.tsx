@@ -164,7 +164,7 @@ const MapComponent = (props: PassedProps) => {
           <SubNote>Hover on map to see the PM 2.5 concetrations</SubNote>
         )}
       </InfoBox>
-      <DateTime>{data.dateTime} UTC</DateTime>
+      <DateTime>{data.dateTime} GMT</DateTime>
       <ColorScale colorScale={colorScale}>
         <h4>
           PM2.5 Concetration (μg/m<sup>3</sup>)

@@ -70,7 +70,7 @@ const TimeSeries = (props: PassedProps) => {
         .attr("y", 0)
         .attr("dy", -5)
         .attr("text-anchor", "end")
-        .text("UTC Hours");
+        .text("GMT Hours");
       graphG
         .selectAll(".dayTick")
         .data(dateArr)
@@ -117,10 +117,9 @@ const TimeSeries = (props: PassedProps) => {
           d["PM2.5"] !== null ? colorScale(d["PM2.5"]) : "#eee"
         )
         .on("mouseover", (event, d: any) => {
-          svg.selectAll(".bars").attr("opacity", 0.4);
           d3.select(event.currentTarget)
             .attr("opacity", 1)
-            .attr("stroke-width", 1)
+            .attr("stroke-width", 3)
             .attr("stroke", "var(--black)");
 
           div.transition().duration(200).style("opacity", 1);

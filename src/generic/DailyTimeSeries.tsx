@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
+import { getMonth } from "../utils/getMonth";
 import _ from "lodash";
 
 interface PassedProps {
@@ -320,6 +321,10 @@ const TimeSeries = (props: PassedProps) => {
       const mousemove = (event: any) => {
         const selectedData =
           data[bisect(data, xScale.invert(d3.pointer(event)[0]), 1)];
+
+        const year  = selectedData.date.toISOString().substring(0, 10).split('-')[0];
+        const day  = selectedData.date.toISOString().substring(0, 10).split('-')[2];
+        const month  = getMonth(selectedData.date.toISOString().substring(0, 10).split('-')[1]);
         focus
           .attr("x1", xScale(selectedData.date))
           .attr("x2", xScale(selectedData.date));
@@ -344,16 +349,14 @@ const TimeSeries = (props: PassedProps) => {
             },${yScale(selectedData["PM2.5_Max"])})`
           );
         focusTextAvgValue.html(
-          `${selectedData.date
-            .toISOString()
-            .substring(0, 10)} (24 hours avg.): ${
+          `${day}-${month}-${year} (24 hours avg.): ${
             selectedData["PM2.5_Avg"]
               ? `${selectedData["PM2.5_Avg"].toFixed(1)}  μg/m3`
               : "NA"
           }`
         );
         focusTextMaxValue.html(
-          `${selectedData.date.toISOString().substring(0, 10)} (Max Value): ${
+          `${day}-${month}-${year} (Max Value): ${
             selectedData["PM2.5_Max"]
               ? `${selectedData["PM2.5_Max"].toFixed(1)}  μg/m3`
               : "NA"
