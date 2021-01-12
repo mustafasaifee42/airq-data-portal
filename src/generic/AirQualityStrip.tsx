@@ -92,7 +92,8 @@ const TimeSeries = (props: PassedProps) => {
           d3.select(event.currentTarget)
             .attr("opacity", 1)
             .attr("stroke-width", 2)
-            .attr("stroke", "var(--black)");
+            .attr("stroke", "var(--black)")
+            .raise();
 
           div.transition().duration(200).style("opacity", 1);
           div
