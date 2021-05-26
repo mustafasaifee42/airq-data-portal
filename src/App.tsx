@@ -17,7 +17,7 @@ import cityList from "./data/cityList.json";
 import _ from "lodash";
 import ReactGA from "react-ga";
 
-ReactGA.initialize("UA-185648012-1");
+ReactGA.initialize("UA-197914695-1");
 ReactGA.set({ anonymizeIp: true });
 ReactGA.pageview("/");
 

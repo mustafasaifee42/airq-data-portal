@@ -322,9 +322,9 @@ const TimeSeries = (props: PassedProps) => {
         const selectedData =
           data[bisect(data, xScale.invert(d3.pointer(event)[0]), 1)];
 
-        const year  = selectedData.date.toISOString().substring(0, 10).split('-')[0];
-        const day  = selectedData.date.toISOString().substring(0, 10).split('-')[2];
-        const month  = getMonth(selectedData.date.toISOString().substring(0, 10).split('-')[1]);
+        const year = selectedData.date.toISOString().substring(0, 10).split('-')[0];
+        const day = selectedData.date.toISOString().substring(0, 10).split('-')[2];
+        const month = getMonth(selectedData.date.toISOString().substring(0, 10).split('-')[1]);
         focus
           .attr("x1", xScale(selectedData.date))
           .attr("x2", xScale(selectedData.date));
@@ -332,34 +332,30 @@ const TimeSeries = (props: PassedProps) => {
           .attr("opacity", 1)
           .attr(
             "transform",
-            `translate(${
-              xScale(selectedData.date) + 15 < width - 250
-                ? xScale(selectedData.date) + 15
-                : xScale(selectedData.date) - 245
+            `translate(${xScale(selectedData.date) + 15 < width - 250
+              ? xScale(selectedData.date) + 15
+              : xScale(selectedData.date) - 245
             },${yScale(selectedData["PM2.5_Avg"])})`
           );
         focusTextGroupMaxValue
           .attr("opacity", 1)
           .attr(
             "transform",
-            `translate(${
-              xScale(selectedData.date) + 15 < width - 250
-                ? xScale(selectedData.date) + 15
-                : xScale(selectedData.date) - 245
+            `translate(${xScale(selectedData.date) + 15 < width - 250
+              ? xScale(selectedData.date) + 15
+              : xScale(selectedData.date) - 245
             },${yScale(selectedData["PM2.5_Max"])})`
           );
         focusTextAvgValue.html(
-          `${day}-${month}-${year} (24 hours avg.): ${
-            selectedData["PM2.5_Avg"]
-              ? `${selectedData["PM2.5_Avg"].toFixed(1)}  μg/m3`
-              : "NA"
+          `${day}-${month}-${year} (24 hours avg.): ${selectedData["PM2.5_Avg"]
+            ? `${selectedData["PM2.5_Avg"].toFixed(1)}  μg/m3`
+            : "NA"
           }`
         );
         focusTextMaxValue.html(
-          `${day}-${month}-${year} (Max Value): ${
-            selectedData["PM2.5_Max"]
-              ? `${selectedData["PM2.5_Max"].toFixed(1)}  μg/m3`
-              : "NA"
+          `${day}-${month}-${year} (Max Value): ${selectedData["PM2.5_Max"]
+            ? `${selectedData["PM2.5_Max"].toFixed(1)}  μg/m3`
+            : "NA"
           }`
         );
       };
