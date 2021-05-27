@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import {getMonth} from '../utils/getMonth';
+import { getMonth } from '../utils/getMonth';
 
 interface PassedProps {
   data: any;
@@ -86,9 +86,9 @@ const TimeSeries = (props: PassedProps) => {
           d["PM2.5_Avg"] !== null ? colorScale(d["PM2.5_Avg"]) : "#eee"
         )
         .on("mouseover", (event, d: any) => {
-          const year  = d.date.toISOString().substring(0, 10).split('-')[0];
-          const day  = d.date.toISOString().substring(0, 10).split('-')[2];
-          const month  = getMonth(d.date.toISOString().substring(0, 10).split('-')[1]);
+          const year = d.date.toISOString().substring(0, 10).split('-')[0];
+          const day = d.date.toISOString().substring(0, 10).split('-')[2];
+          const month = getMonth(d.date.toISOString().substring(0, 10).split('-')[1]);
           d3.select(event.currentTarget)
             .attr("opacity", 1)
             .attr("stroke-width", 2)
@@ -98,10 +98,14 @@ const TimeSeries = (props: PassedProps) => {
           div.transition().duration(200).style("opacity", 1);
           div
             .html(
-              `${day}-${month}-${year}: ${
-                d["PM2.5_Avg"] !== null
-                  ? `${d["PM2.5_Avg"].toFixed(1)} μg/m3`
-                  : "NA"
+              `${day}-${month}-${year}: ${d["PM2.5_Avg"] !== null
+                ? `<span class='bold'>${d["PM2.5_Avg"].toFixed(1)} μg/m3</span>`
+                : "NA"
+              }${d["PM2.5_Avg"] !== null
+                ? `
+                    <br />
+                    Equivalent to smoking <span class='bold'>${(d["PM2.5_Avg"] / 22).toFixed(1)} cigarettes</span>`
+                : ''
               }`
             )
             .style("left", `${event.pageX + 10}px`)
