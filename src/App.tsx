@@ -98,7 +98,16 @@ const GlobalStyle = createGlobalStyle`
     padding: 5px;
     font-size: 12px;
     font-family: IBM Plex Sans, sans-serif;
-    background: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.8);
+    pointer-events: none;
+  }
+
+  .tooltiForBar {
+    position: absolute;
+    padding: 5px;
+    font-size: 12px;
+    font-family: IBM Plex Sans, sans-serif;
+    background: rgba(255,255,255,0.8);
     pointer-events: none;
   }
 

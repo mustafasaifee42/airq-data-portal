@@ -18,6 +18,7 @@ import DataCard from "../generic/DataCard";
 import { Link } from "react-router-dom";
 import { Sequential, Quantized } from "../Scales";
 import cityList from "../data/cityList.json";
+import BarGraph from "../generic/BarGraph";
 import _ from "lodash";
 
 const Title = styled.div`
@@ -158,6 +159,30 @@ const BreadCrumb = styled.div`
   margin-bottom: 30px;
 `;
 
+const ToggleDiv = styled.div`
+  display: flex;
+`;
+
+const TitleDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+const ToggleOption = styled.div`
+  padding: 5px 20px;
+  border: 1px solid var(--gray);
+  cursor: pointer;
+  &:first-of-type{
+    border-radius: 50px 0 0 50px;
+  }
+  &:last-of-type{
+    border-radius: 0 50px 50px 0;
+    border-left: 0;
+  }
+`;
+
 const CityListContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -182,6 +207,10 @@ const ShowMoreLess = styled.button`
   font-size: 16px;
 `;
 
+const H2 = styled.h2`
+  padding: 0;
+`;
+
 const CityPage = (props: any) => {
   const [lastHourData, setLastHourData] = useState<any>(null);
   const [lastDayData, setLastDayData] = useState<any>(null);
@@ -193,6 +222,7 @@ const CityPage = (props: any) => {
   const [error, setError] = useState<string | undefined>(undefined);
   const [particleWidth, setParticleWidth] = useState<number>(100);
   const [showMore, setShowMore] = useState<boolean>(true);
+  const [optionForDailyAvg, setOptionForDailyAvg] = useState('timeSeries');
 
   const GraphRef = useRef(null);
   useEffect(() => {
@@ -225,7 +255,7 @@ const CityPage = (props: any) => {
               const avgVal =
                 el["PM2.5"].noOfObservations /
                   el["PM2.5"].totalNoOfPossibleObservations <=
-                0.5
+                  0.5
                   ? null
                   : el["PM2.5"].avgValue;
               return {
@@ -251,7 +281,7 @@ const CityPage = (props: any) => {
               const avgVal =
                 el["PM2.5"].noOfObservations /
                   el["PM2.5"].totalNoOfPossibleObservations <=
-                0.5
+                  0.5
                   ? null
                   : el["PM2.5"].avgValue;
               return {
@@ -289,7 +319,7 @@ const CityPage = (props: any) => {
       <Container>
         <DataCardContainer>
           {error ? (
-            <ErrorDiv style={{margin: '0 20px'}}>{error}</ErrorDiv>
+            <ErrorDiv style={{ margin: '0 20px' }}>{error}</ErrorDiv>
           ) : (
             <>
               <DataCardEl ref={GraphRef}>
@@ -348,8 +378,8 @@ const CityPage = (props: any) => {
                         lastDayData === "NA"
                           ? lastDayData
                           : lastDayData["PM2.5"].avgValue === null
-                          ? "NA"
-                          : lastDayData["PM2.5"].avgValue.toFixed(1)
+                            ? "NA"
+                            : lastDayData["PM2.5"].avgValue.toFixed(1)
                       }
                       particleWidth={particleWidth}
                       city={props.match.params.region.replace(/_/g, " ")}
@@ -371,8 +401,8 @@ const CityPage = (props: any) => {
                   {lastDayData ? <SubNote>{lastDayData.Date}</SubNote> : null}{" "}
                   <br />
                   {lastDayData &&
-                  lastDayData !== "NA" &&
-                  lastDayData["PM2.5"].avgValue !== null ? (
+                    lastDayData !== "NA" &&
+                    lastDayData["PM2.5"].avgValue !== null ? (
                     <>
                       <Span>
                         Breathing this air for whole day is equivalent to
@@ -424,10 +454,10 @@ const CityPage = (props: any) => {
                   ) : null}{" "}
                   <br />
                   {lastMonthData &&
-                  lastMonthData["PM2.5"].noOfObservations /
+                    lastMonthData["PM2.5"].noOfObservations /
                     lastMonthData["PM2.5"].totalNoOfPossibleObservations >
                     0.6 &&
-                  lastMonthData["PM2.5"].avgValue !== null ? (
+                    lastMonthData["PM2.5"].avgValue !== null ? (
                     <>
                       <Span>
                         Breathing this air for month is equivalent to smoking{" "}
@@ -480,11 +510,22 @@ const CityPage = (props: any) => {
           )}
         </TimeSeriesCard>
         <TimeSeriesCard>
-          <h2>Daily Average Time Series (Last 2 years)</h2>
+          <TitleDiv>
+            <H2>Daily Average Time Series (Last 2 years)</H2>
+            <ToggleDiv>
+              <ToggleOption style={{ backgroundColor: optionForDailyAvg === 'timeSeries' ? 'var(--light-gray)' : 'var(--white)' }} onClick={() => { setOptionForDailyAvg('timeSeries') }}>TimeSeries</ToggleOption>
+              <ToggleOption style={{ backgroundColor: optionForDailyAvg === 'cigaretteEq' ? 'var(--light-gray)' : 'var(--white)' }} onClick={() => { setOptionForDailyAvg('cigaretteEq') }}>Cigarette Eq.</ToggleOption>
+            </ToggleDiv>
+          </TitleDiv>
           {error ? (
             <ErrorDiv>{error}</ErrorDiv>
-          ) : dailyTS ? (
+          ) : dailyTS ? optionForDailyAvg === 'timeSeries' ? (
             <DailyTimeSeries data={dailyTS} />
+          ) : (
+            <BarGraph
+              data={dailyTS}
+              region={`${props.match.params.region}, ${props.match.params.country}`}
+            />
           ) : (
             <div>
               <Loader type="Oval" color="#00BFFF" height={50} width={50} />
@@ -552,21 +593,20 @@ const CityPage = (props: any) => {
             <IconEl>
               <FacebookShareButton
                 url={`https://airq.mustafasaifee.com/${props.match.params.country}/${props.match.params.region}`}
-                quote={`${
-                  lastDayData["PM2.5"].noOfObservations > 12
-                    ? `PM2.5 concentration in ${props.match.params.region.replace(
-                        /_/g,
-                        " "
-                      )} yesterday was ${lastDayData["PM2.5"].avgValue.toFixed(
-                        2
-                      )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
-                        lastDayData["PM2.5"].avgValue / 22
-                      ).toFixed(1)} cigarettes.`
-                    : `Get realtime air quality for ${props.match.params.region.replace(
-                        /_/g,
-                        " "
-                      )}`
-                }`}
+                quote={`${lastDayData["PM2.5"].noOfObservations > 12
+                  ? `PM2.5 concentration in ${props.match.params.region.replace(
+                    /_/g,
+                    " "
+                  )} yesterday was ${lastDayData["PM2.5"].avgValue.toFixed(
+                    2
+                  )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
+                    lastDayData["PM2.5"].avgValue / 22
+                  ).toFixed(1)} cigarettes.`
+                  : `Get realtime air quality for ${props.match.params.region.replace(
+                    /_/g,
+                    " "
+                  )}`
+                  }`}
               >
                 <FacebookIcon size={40} round={true} />
               </FacebookShareButton>
@@ -574,25 +614,22 @@ const CityPage = (props: any) => {
             <IconEl>
               <TwitterShareButton
                 url={`https://airq.mustafasaifee.com/${props.match.params.country}/${props.match.params.region}`}
-                title={`${
-                  lastDayData["PM2.5"].noOfObservations > 12
-                    ? `PM2.5 concentration in ${props.match.params.region.replace(
-                        /_/g,
-                        " "
-                      )} yesterday was ${lastDayData["PM2.5"].avgValue.toFixed(
-                        2
-                      )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
-                        lastDayData["PM2.5"].avgValue / 22
-                      ).toFixed(1)} cigarettes. `
-                    : ""
-                }Get realtime air quality for ${props.match.params.region.replace(
-                  /_/g,
-                  " "
-                )}: https://airq.mustafasaifee.com/${
-                  props.match.params.country
-                }/${
-                  props.match.params.region
-                } via @mustafasaifee42, Data by @BerkeleyEarth`}
+                title={`${lastDayData["PM2.5"].noOfObservations > 12
+                  ? `PM2.5 concentration in ${props.match.params.region.replace(
+                    /_/g,
+                    " "
+                  )} yesterday was ${lastDayData["PM2.5"].avgValue.toFixed(
+                    2
+                  )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
+                    lastDayData["PM2.5"].avgValue / 22
+                  ).toFixed(1)} cigarettes. `
+                  : ""
+                  }Get realtime air quality for ${props.match.params.region.replace(
+                    /_/g,
+                    " "
+                  )}: https://airq.mustafasaifee.com/${props.match.params.country
+                  }/${props.match.params.region
+                  } via @mustafasaifee42, Data by @BerkeleyEarth`}
               >
                 <TwitterIcon size={40} round={true} />
               </TwitterShareButton>
@@ -617,11 +654,9 @@ const CityPage = (props: any) => {
                 title={`Get realtime air quality for ${props.match.params.region.replace(
                   /_/g,
                   " "
-                )}: https://airq.mustafasaifee.com/${
-                  props.match.params.country
-                }/${
-                  props.match.params.region
-                } via @mustafasaifee42, Data by @BerkeleyEarth`}
+                )}: https://airq.mustafasaifee.com/${props.match.params.country
+                  }/${props.match.params.region
+                  } via @mustafasaifee42, Data by @BerkeleyEarth`}
               >
                 <TwitterIcon size={40} round={true} />
               </TwitterShareButton>
