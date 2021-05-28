@@ -69,13 +69,13 @@ export const CityCard = (props: PassedProps) => {
     regionID,
     value,
     ranking,
-  }  = props;
+  } = props;
   if (value)
     return (
       <CityEl>
         <CardTitle>
           <CityName>
-            {city}, {country}
+            <a href={`./${countryID}/${regionID}/${cityID}`}>{city}, {country}</a>
           </CityName>
           {ranking ? <Ranking># {ranking}</Ranking> : null}
         </CardTitle>
@@ -90,7 +90,7 @@ export const CityCard = (props: PassedProps) => {
             text={getHealthStatus(value)?.value}
             truncate={
               getHealthStatus(value)?.value ===
-              "Unhealthy for sensitive groups"
+                "Unhealthy for sensitive groups"
                 ? true
                 : false
             }

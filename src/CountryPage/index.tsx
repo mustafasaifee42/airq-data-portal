@@ -239,7 +239,7 @@ const CityPage = (props: any) => {
         } else {
           const summaryData: any = getSummary(d.data);
           const Date1 = new Date(`${summaryData["Most Recent"].DateTime}Z`);
-          if ((new Date().getTime() - Date1.getTime()) / 3600000 <= 3)
+          if ((new Date().getTime() - Date1.getTime()) / 3600000 <= 24)
             setLastHourData(summaryData["Most Recent"]);
           else setLastHourData("NA");
           setLastDayData(summaryData["Last Day"]);
@@ -250,7 +250,7 @@ const CityPage = (props: any) => {
               const avgVal =
                 el["PM2.5"].noOfObservations /
                   el["PM2.5"].totalNoOfPossibleObservations <=
-                0.5
+                  0.5
                   ? null
                   : el["PM2.5"].avgValue;
               return {
@@ -276,7 +276,7 @@ const CityPage = (props: any) => {
               const avgVal =
                 el["PM2.5"].noOfObservations /
                   el["PM2.5"].totalNoOfPossibleObservations <=
-                0.5
+                  0.5
                   ? null
                   : el["PM2.5"].avgValue;
               return {
@@ -304,8 +304,8 @@ const CityPage = (props: any) => {
           a["PM2.5"]["Last Hour"] > b["PM2.5"]["Last Hour"]
             ? -1
             : a["PM2.5"]["Last Hour"] < b["PM2.5"]["Last Hour"]
-            ? 1
-            : 0
+              ? 1
+              : 0
         );
         setCountryCityList(data);
       })
@@ -360,7 +360,7 @@ const CityPage = (props: any) => {
                       }
                       particleWidth={particleWidth}
                       city={props.match.params.country.replace(/_/g, " ")}
-                      text={"Last hour's"}
+                      text={"Most recent available hourly"}
                     />
                   ) : (
                     <DataValueEl>
@@ -374,7 +374,7 @@ const CityPage = (props: any) => {
                   )}
                 </>
                 <DataNote>
-                  Last Hour
+                  Most Recent Available Hourly Data <SubNote>(in last 24 Hrs.)</SubNote>
                   <br />
                   {lastHourData && lastHourData !== "NA" ? (
                     <>
@@ -405,8 +405,8 @@ const CityPage = (props: any) => {
                         lastDayData === "NA"
                           ? lastDayData
                           : lastDayData["PM2.5"].avgValue === null
-                          ? "NA"
-                          : lastDayData["PM2.5"].avgValue.toFixed(1)
+                            ? "NA"
+                            : lastDayData["PM2.5"].avgValue.toFixed(1)
                       }
                       particleWidth={particleWidth}
                       city={props.match.params.country.replace(/_/g, " ")}
@@ -428,8 +428,8 @@ const CityPage = (props: any) => {
                   {lastDayData ? <SubNote>{lastDayData.Date}</SubNote> : null}{" "}
                   <br />
                   {lastDayData &&
-                  lastDayData !== "NA" &&
-                  lastDayData["PM2.5"].avgValue !== null ? (
+                    lastDayData !== "NA" &&
+                    lastDayData["PM2.5"].avgValue !== null ? (
                     <>
                       <Span>
                         Breathing this air for whole day is equivalent to
@@ -481,10 +481,10 @@ const CityPage = (props: any) => {
                   ) : null}{" "}
                   <br />
                   {lastMonthData &&
-                  lastMonthData["PM2.5"].noOfObservations /
+                    lastMonthData["PM2.5"].noOfObservations /
                     lastMonthData["PM2.5"].totalNoOfPossibleObservations >
                     0.6 &&
-                  lastMonthData["PM2.5"].avgValue !== null ? (
+                    lastMonthData["PM2.5"].avgValue !== null ? (
                     <>
                       <Span>
                         Breathing this air for month is equivalent to smoking{" "}
@@ -612,21 +612,20 @@ const CityPage = (props: any) => {
             <IconEl>
               <FacebookShareButton
                 url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
-                quote={`${
-                  lastDayData["PM2.5"].noOfObservations > 12
-                    ? `PM2.5 concentration in ${props.match.params.country.replace(
-                        /_/g,
-                        " "
-                      )} yesterday was ${lastDayData["PM2.5"].avgValue.toFixed(
-                        2
-                      )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
-                        lastDayData["PM2.5"].avgValue / 22
-                      ).toFixed(1)} cigarettes.`
-                    : `Get realtime air quality for ${props.match.params.country.replace(
-                        /_/g,
-                        " "
-                      )}`
-                }`}
+                quote={`${lastDayData["PM2.5"].noOfObservations > 12
+                  ? `PM2.5 concentration in ${props.match.params.country.replace(
+                    /_/g,
+                    " "
+                  )} yesterday was ${lastDayData["PM2.5"].avgValue.toFixed(
+                    2
+                  )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
+                    lastDayData["PM2.5"].avgValue / 22
+                  ).toFixed(1)} cigarettes.`
+                  : `Get realtime air quality for ${props.match.params.country.replace(
+                    /_/g,
+                    " "
+                  )}`
+                  }`}
               >
                 <FacebookIcon size={40} round={true} />
               </FacebookShareButton>
@@ -634,23 +633,21 @@ const CityPage = (props: any) => {
             <IconEl>
               <TwitterShareButton
                 url={`https://airq.mustafasaifee.com/${props.match.params.country}`}
-                title={`${
-                  lastDayData["PM2.5"].noOfObservations > 12
-                    ? `PM2.5 concentration in ${props.match.params.country.replace(
-                        /_/g,
-                        " "
-                      )} yesterday was ${lastDayData["PM2.5"].avgValue.toFixed(
-                        2
-                      )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
-                        lastDayData["PM2.5"].avgValue / 22
-                      ).toFixed(1)} cigarettes. `
-                    : ""
-                }Get realtime air quality for ${props.match.params.country.replace(
-                  /_/g,
-                  " "
-                )}: https://airq.mustafasaifee.com/${
-                  props.match.params.country
-                } via @mustafasaifee42, Data by @BerkeleyEarth`}
+                title={`${lastDayData["PM2.5"].noOfObservations > 12
+                  ? `PM2.5 concentration in ${props.match.params.country.replace(
+                    /_/g,
+                    " "
+                  )} yesterday was ${lastDayData["PM2.5"].avgValue.toFixed(
+                    2
+                  )}μg/m3 (recommended level < 12μg/m3 by US EPA). Equivalent to smoking ${(
+                    lastDayData["PM2.5"].avgValue / 22
+                  ).toFixed(1)} cigarettes. `
+                  : ""
+                  }Get realtime air quality for ${props.match.params.country.replace(
+                    /_/g,
+                    " "
+                  )}: https://airq.mustafasaifee.com/${props.match.params.country
+                  } via @mustafasaifee42, Data by @BerkeleyEarth`}
               >
                 <TwitterIcon size={40} round={true} />
               </TwitterShareButton>
@@ -675,9 +672,8 @@ const CityPage = (props: any) => {
                 title={`Get realtime air quality for ${props.match.params.country.replace(
                   /_/g,
                   " "
-                )}: https://airq.mustafasaifee.com/${
-                  props.match.params.country
-                } via @mustafasaifee42, Data by @BerkeleyEarth`}
+                )}: https://airq.mustafasaifee.com/${props.match.params.country
+                  } via @mustafasaifee42, Data by @BerkeleyEarth`}
               >
                 <TwitterIcon size={40} round={true} />
               </TwitterShareButton>

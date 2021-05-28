@@ -153,34 +153,6 @@ const BreadCrumb = styled.div`
   margin-bottom: 30px;
 `;
 
-const ToggleDiv = styled.div`
-  display: flex;
-`
-
-const TitleDiv = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-`
-
-const ToggleOption = styled.div`
-  padding: 5px 20px;
-  border: 1px solid var(--gray);
-  cursor: pointer;
-  &:first-of-type{
-    border-radius: 50px 0 0 50px;
-  }
-  &:last-of-type{
-    border-radius: 0 50px 50px 0;
-    border-left: 0;
-  }
-`
-
-const H2 = styled.h2`
-  padding: 0;
-`;
-
 const CityPage = (props: any) => {
   const [lastHourData, setLastHourData] = useState<any>(null);
   const [lastDayData, setLastDayData] = useState<any>(null);
@@ -191,7 +163,6 @@ const CityPage = (props: any) => {
   const [dailyTSYearly, setDailyTSYearly] = useState<any>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
   const [particleWidth, setParticleWidth] = useState<number>(100);
-  const [optionForDailyAvg, setOptionForDailyAvg] = useState('timeSeries')
 
   const GraphRef = useRef(null);
   useEffect(() => {
@@ -213,7 +184,7 @@ const CityPage = (props: any) => {
         } else {
           const summaryData: any = getSummary(d.data);
           const Date1 = new Date(`${summaryData["Most Recent"].DateTime}Z`);
-          if ((new Date().getTime() - Date1.getTime()) / 3600000 <= 3)
+          if ((new Date().getTime() - Date1.getTime()) / 3600000 <= 24)
             setLastHourData(summaryData["Most Recent"]);
           else setLastHourData("NA");
           setLastDayData(summaryData["Last Day"]);
@@ -308,7 +279,7 @@ const CityPage = (props: any) => {
                       }
                       particleWidth={particleWidth}
                       city={props.match.params.city.replace(/_/g, " ")}
-                      text={"Last hour's"}
+                      text={"Most recent available hourly"}
                     />
                   ) : (
                     <DataValueEl>
@@ -322,7 +293,7 @@ const CityPage = (props: any) => {
                   )}
                 </>
                 <DataNote>
-                  Last Hour
+                  Most Recent Available Hourly Data <SubNote>(in last 24 Hrs.)</SubNote>
                   <br />
                   {lastHourData && lastHourData !== "NA" ? (
                     <>
@@ -470,6 +441,21 @@ const CityPage = (props: any) => {
           )}
         </TimeSeriesCard>
         <TimeSeriesCard>
+          <h2>Air Quality {'&'} Cigarette Equivalence (Last 365 days)</h2>
+          {error ? (
+            <ErrorDiv>{error}</ErrorDiv>
+          ) : dailyTSYearly ? (
+            <BarGraph
+              data={dailyTSYearly}
+              region={`${props.match.params.city}, ${props.match.params.country}`}
+            />
+          ) : (
+            <div>
+              <Loader type="Oval" color="#00BFFF" height={50} width={50} />
+            </div>
+          )}
+        </TimeSeriesCard>
+        <TimeSeriesCard>
           <h2>Air Quality by Time of Day</h2>
           <KeyEl>
             <Sequential />
@@ -485,22 +471,11 @@ const CityPage = (props: any) => {
           )}
         </TimeSeriesCard>
         <TimeSeriesCard>
-          <TitleDiv>
-            <H2>Daily Average Time Series (Last 2 years)</H2>
-            <ToggleDiv>
-              <ToggleOption style={{ backgroundColor: optionForDailyAvg === 'timeSeries' ? 'var(--light-gray)' : 'var(--white)' }} onClick={() => { setOptionForDailyAvg('timeSeries') }}>TimeSeries</ToggleOption>
-              <ToggleOption style={{ backgroundColor: optionForDailyAvg === 'cigaretteEq' ? 'var(--light-gray)' : 'var(--white)' }} onClick={() => { setOptionForDailyAvg('cigaretteEq') }}>Cigarette Eq.</ToggleOption>
-            </ToggleDiv>
-          </TitleDiv>
+          <h2>Daily Average Time Series (Last 2 years)</h2>
           {error ? (
             <ErrorDiv>{error}</ErrorDiv>
-          ) : dailyTS ? optionForDailyAvg === 'timeSeries' ? (
+          ) : dailyTS ? (
             <DailyTimeSeries data={dailyTS} />
-          ) : (
-            <BarGraph
-              data={dailyTS}
-              region={`${props.match.params.city}, ${props.match.params.country}`}
-            />
           ) : (
             <div>
               <Loader type="Oval" color="#00BFFF" height={50} width={50} />

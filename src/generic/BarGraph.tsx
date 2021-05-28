@@ -15,10 +15,16 @@ const Note = styled.div`
   background-color: var(--moderate-light-gray);
   border: 1px solid var(--light-gray);
   padding: 5px;
-  margin: 20px 0;
+  margin: 10px 0 20px 0;
   border-radius: 5px;
   text-align: center;
 `;
+
+const SubNote = styled.span`
+  font-size: 14px;
+  font-style: italic;
+
+`
 
 const TimeSeries = (props: PassedProps) => {
   const { data, region } = props;
@@ -26,7 +32,7 @@ const TimeSeries = (props: PassedProps) => {
 
   const dataUpdated = _.filter(
     data,
-    (d: any) => d["PM2.5_Avg"] !== undefined || d["PM2.5_Avg"] !== null
+    (d: any) => d["PM2.5_Avg"] !== null
   );
   let pmValAvg = 0;
   dataUpdated.forEach(d => {
@@ -135,6 +141,8 @@ const TimeSeries = (props: PassedProps) => {
         .attr("width", width / data.length)
         .style("fill", (d: any) => d["PM2.5_Avg"] ? "var(--primary-color)" : "#fafafa")
         .style("pointer-events", "none")
+        .attr('rx', 2)
+        .attr('ry', 2)
       mainGraph
         .append("g")
         .style("font-size", "10px")
@@ -169,7 +177,10 @@ const TimeSeries = (props: PassedProps) => {
     // eslint-disable-next-line
   }, [GraphRef.current]);
   return <>
-    <Note>Breathing the air in {region} for 2 years is equivalent to smoking <span className="bold">{cigAvg} cigarettes</span> every day.</Note>
+    { dataUpdated.length > data.length * 0.7 ?
+      <Note>Breathing air in {region.replace(/_/g, " ")} last year is equivalent to smoking <span className="bold">{cigAvg} cigarettes</span> on average per day. <br /><SubNote>Data available for {dataUpdated.length} out of {data.length} days.</SubNote></Note>
+      : null
+    }
     <div ref={GraphRef} />
   </>
 };
