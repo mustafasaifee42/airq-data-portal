@@ -244,7 +244,7 @@ const CityPage = (props: any) => {
         } else {
           const summaryData: any = getSummary(d.data);
           const Date1 = new Date(`${summaryData["Most Recent"].DateTime}Z`);
-          if ((new Date().getTime() - Date1.getTime()) / 3600000 <= 3)
+          if ((new Date().getTime() - Date1.getTime()) / 3600000 <= 24)
             setLastHourData(summaryData["Most Recent"]);
           else setLastHourData("NA");
           setLastDayData(summaryData["Last Day"]);
@@ -333,7 +333,7 @@ const CityPage = (props: any) => {
                       }
                       particleWidth={particleWidth}
                       city={props.match.params.region.replace(/_/g, " ")}
-                      text={"Last hour's"}
+                      text={"Most recent available hourly"}
                     />
                   ) : (
                     <DataValueEl>
@@ -347,7 +347,7 @@ const CityPage = (props: any) => {
                   )}
                 </>
                 <DataNote>
-                  Last Hour
+                  Most Recent Available Hourly Data <SubNote>(in last 24 Hrs.)</SubNote>
                   <br />
                   {lastHourData && lastHourData !== "NA" ? (
                     <>
@@ -495,6 +495,21 @@ const CityPage = (props: any) => {
           )}
         </TimeSeriesCard>
         <TimeSeriesCard>
+          <h2>Air Quality {'&'} Cigarette Equivalence (Last 365 days)</h2>
+          {error ? (
+            <ErrorDiv>{error}</ErrorDiv>
+          ) : dailyTSYearly ? (
+            <BarGraph
+              data={dailyTSYearly}
+              region={`${props.match.params.region}, ${props.match.params.country}`}
+            />
+          ) : (
+            <div>
+              <Loader type="Oval" color="#00BFFF" height={50} width={50} />
+            </div>
+          )}
+        </TimeSeriesCard>
+        <TimeSeriesCard>
           <h2>Air Quality by Time of Day</h2>
           <KeyEl>
             <Sequential />
@@ -519,13 +534,8 @@ const CityPage = (props: any) => {
           </TitleDiv>
           {error ? (
             <ErrorDiv>{error}</ErrorDiv>
-          ) : dailyTS ? optionForDailyAvg === 'timeSeries' ? (
+          ) : dailyTS ? (
             <DailyTimeSeries data={dailyTS} />
-          ) : (
-            <BarGraph
-              data={dailyTS}
-              region={`${props.match.params.region}, ${props.match.params.country}`}
-            />
           ) : (
             <div>
               <Loader type="Oval" color="#00BFFF" height={50} width={50} />
