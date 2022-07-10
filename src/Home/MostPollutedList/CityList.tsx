@@ -79,7 +79,7 @@ export const CityList = (props: PassedProps) => {
     };
   });
   const cities = data
-    .filter((city, i) => i < 10)
+    .filter((_city, i) => i < 10)
     .map((city: CityData, i: number) => {
       if (city["PM2.5"]["Last Hour"]) {
         return (

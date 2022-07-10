@@ -98,9 +98,11 @@ const MostPollutedList = () => {
           )
         </SubNote>
       </h1>
-        {cityList ? (
-          <CityList data={cityList} setLastUpdated={setLastUpdated} setLastUpdatedErr={setlLastUpdatedErr} />
-        ) : err ? (
+        {cityList ?
+          cityList.length !== 0 ? (
+            <CityList data={cityList} setLastUpdated={setLastUpdated} setLastUpdatedErr={setlLastUpdatedErr} />
+          ) : <ErrorDiv>No Data Available to the Current Hour.</ErrorDiv>
+        : err ? (
           <ErrorDiv>{err}</ErrorDiv>
         ) : (
           <LoaderEl>

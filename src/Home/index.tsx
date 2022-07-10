@@ -17,6 +17,7 @@ const MapDiv = styled.div`
 const Home = () => {
   const [mapData, setMapData] = useState<any>();
   useEffect(() => {
+    // tslint:disable-next-line: no-floating-promises
     fetch(
       "https://raw.githubusercontent.com/mustafasaifee42/air-quality-grid-map-image-data/main/airQualityData.json"
     )
